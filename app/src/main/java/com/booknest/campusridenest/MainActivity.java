@@ -1,5 +1,6 @@
 package com.booknest.campusridenest;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -20,5 +21,11 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        findViewById(R.id.btnGoRegister).setOnClickListener(v ->
+                startActivity(new Intent(this, com.booknest.campusridenest.ui.RegisterActivity.class)));
+        findViewById(R.id.btnGoLogin).setOnClickListener(v ->
+                startActivity(new Intent(this, com.booknest.campusridenest.ui.LoginActivity.class)));
+
     }
 }

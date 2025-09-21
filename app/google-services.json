@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1068312336017",
+    "project_id": "campusridenest",
+    "storage_bucket": "campusridenest.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068312336017:android:51a7002b9facdec627d130",
+        "android_client_info": {
+          "package_name": "com.booknest.campusridenest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIhJQ1kxecoodzlJbZahIQJTbllDhK0m8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

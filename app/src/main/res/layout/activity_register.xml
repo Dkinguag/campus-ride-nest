@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <TextView android:id="@+id/lblEmailR" android:text="Email"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:labelFor="@+id/etEmailR" />
+
+        <EditText android:id="@+id/etEmailR" android:hint="Email"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:inputType="textEmailAddress" />
+
+        <TextView android:id="@+id/lblPassR" android:text="Password"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:labelFor="@+id/etPassR" />
+
+        <EditText android:id="@+id/etPassR" android:hint="Password"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+
+        <Button android:id="@+id/btnRegister" android:text="Create account"
+            android:minHeight="48dp" android:layout_marginTop="12dp"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    </LinearLayout>
+</ScrollView>
