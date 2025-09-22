@@ -9,6 +9,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.booknest.campusridenest.ui.OfferCreateActivity;
+import com.booknest.campusridenest.ui.RequestCreateActivity;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -26,6 +29,11 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, com.booknest.campusridenest.ui.RegisterActivity.class)));
         findViewById(R.id.btnGoLogin).setOnClickListener(v ->
                 startActivity(new Intent(this, com.booknest.campusridenest.ui.LoginActivity.class)));
+        findViewById(R.id.btnGoOfferCreate).setOnClickListener(v ->
+                startActivity(new android.content.Intent(this, OfferCreateActivity.class)));
+        findViewById(R.id.btnGoRequestCreate).setOnClickListener(v ->
+                startActivity(new android.content.Intent(this, RequestCreateActivity.class)));
+
 
     }
 }

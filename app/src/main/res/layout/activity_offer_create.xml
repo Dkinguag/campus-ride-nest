@@ -6,9 +6,11 @@
 
     <LinearLayout
         android:orientation="vertical"
+        android:importantForAutofill="yes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <!-- Origin -->
         <TextView
             android:id="@+id/lblOrigin"
             android:text="Origin"
@@ -19,9 +21,12 @@
         <EditText
             android:id="@+id/etOrigin"
             android:hint="HUB"
+            android:inputType="textCapWords"
+            android:autofillHints="postalAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <!-- Destination -->
         <TextView
             android:id="@+id/lblDestination"
             android:text="Destination"
@@ -32,9 +37,12 @@
         <EditText
             android:id="@+id/etDestination"
             android:hint="Main Building"
+            android:inputType="textCapWords"
+            android:autofillHints="postalAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <!-- Seats -->
         <TextView
             android:id="@+id/lblSeats"
             android:text="Seats"
@@ -46,9 +54,11 @@
             android:id="@+id/etSeats"
             android:hint="2"
             android:inputType="number"
+            android:imeOptions="actionDone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <!-- Action -->
         <Button
             android:id="@+id/btnCreateOffer"
             android:text="Create Offer"

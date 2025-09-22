@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent" android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/lblOriginR" android:text="Origin"
+            android:labelFor="@+id/etOriginR"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/etOriginR" android:hint="HUB"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/lblDestinationR" android:text="Destination"
+            android:labelFor="@+id/etDestinationR"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/etDestinationR" android:hint="Main Building"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/lblSeatsR" android:text="Seats"
+            android:labelFor="@+id/etSeatsR"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/etSeatsR" android:hint="1" android:inputType="number"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/btnCreateRequest" android:text="Create Request"
+            android:minHeight="48dp" android:layout_marginTop="12dp"
+            android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    </LinearLayout>
+</ScrollView>
