@@ -1,0 +1,141 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==================== Helper Functions ====================
+
+    /**
+     * Check if user is authenticated
+     */
+    function authed() {
+      return request.auth != null;
+    }
+
+    /**
+     * Check if user's email is verified
+     */
+    function emailVerified() {
+      return request.auth.token.email_verified == true;
+    }
+
+    /**
+     * Check if the document being created has ownerUid matching the current user
+     */
+    function creatingOwn() {
+      return request.resource.data.ownerUid == request.auth.uid;
+    }
+
+    /**
+     * Check if the current user owns the existing document
+     */
+    function isOwner() {
+      return resource.data.ownerUid == request.auth.uid;
+    }
+
+    // ==================== Offer Document Validation ====================
+
+    /**
+     * Validates that an offer document has all required fields with correct types and constraints.
+     * Defense in depth: Even if client validation is bypassed, server rejects malformed data.
+     */
+    function validOfferDoc() {
+      let req = request.resource.data;
+      return req.keys().hasAll([
+          'ownerUid', 'type', 'origin', 'destination',
+          'dateTime', 'seats', 'status', 'createdAt', 'updatedAt'
+        ])
+        && req.type == 'offer'
+        && req.ownerUid is string && req.ownerUid.size() > 0
+        && req.origin is string && req.origin.size() > 0 && req.origin.size() <= 200
+        && req.destination is string && req.destination.size() > 0 && req.destination.size() <= 200
+        && req.seats is int && req.seats >= 1 && req.seats <= 8
+        && req.status in ['open', 'closed']
+        && req.dateTime is timestamp
+        && req.createdAt is timestamp
+        && req.updatedAt is timestamp
+        // Optional fields validation
+        && (!req.keys().hasAny(['price']) || (req.price is number && req.price >= 0 && req.price <= 1000))
+        && (!req.keys().hasAny(['notes']) || (req.notes is string && req.notes.size() <= 500));
+    }
+
+    // ==================== Request Document Validation ====================
+
+    /**
+     * Validates that a request document has all required fields with correct types and constraints.
+     * Identical structure to offers but with type='request'.
+     */
+    function validRequestDoc() {
+      let req = request.resource.data;
+      return req.keys().hasAll([
+          'ownerUid', 'type', 'origin', 'destination',
+          'dateTime', 'seats', 'status', 'createdAt', 'updatedAt'
+        ])
+        && req.type == 'request'
+        && req.ownerUid is string && req.ownerUid.size() > 0
+        && req.origin is string && req.origin.size() > 0 && req.origin.size() <= 200
+        && req.destination is string && req.destination.size() > 0 && req.destination.size() <= 200
+        && req.seats is int && req.seats >= 1 && req.seats <= 8
+        && req.status in ['open', 'closed']
+        && req.dateTime is timestamp
+        && req.createdAt is timestamp
+        && req.updatedAt is timestamp
+        // Optional fields validation
+        && (!req.keys().hasAny(['price']) || (req.price is number && req.price >= 0 && req.price <= 1000))
+        && (!req.keys().hasAny(['notes']) || (req.notes is string && req.notes.size() <= 500));
+    }
+
+    // ==================== Offers Collection ====================
+
+    match /offers/{offerId} {
+      // Anyone authenticated can read offers
+      allow read: if authed();
+
+      // Create: must be authenticated, email verified, creating own document, and document is valid
+      allow create: if authed()
+                    && emailVerified()
+                    && creatingOwn()
+                    && validOfferDoc()
+                    && request.resource.data.status == 'open';
+
+      // Update: must be authenticated, own the document, and document is valid
+      allow update: if authed()
+                    && isOwner()
+                    && validOfferDoc();
+
+      // Delete: must be authenticated and own the document
+      allow delete: if authed() && isOwner();
+    }
+
+    // ==================== Requests Collection ====================
+
+    match /requests/{requestId} {
+      // Anyone authenticated can read requests
+      allow read: if authed();
+
+      // Create: must be authenticated, email verified, creating own document, and document is valid
+      allow create: if authed()
+                    && emailVerified()
+                    && creatingOwn()
+                    && validRequestDoc()
+                    && request.resource.data.status == 'open';
+
+      // Update: must be authenticated, own the document, and document is valid
+      allow update: if authed()
+                    && isOwner()
+                    && validRequestDoc();
+
+      // Delete: must be authenticated and own the document
+      allow delete: if authed() && isOwner();
+    }
+
+    // ==================== Users Collection (if you have one) ====================
+
+    match /users/{userId} {
+      // Users can read their own profile
+      allow read: if authed() && request.auth.uid == userId;
+
+      // Users can create/update their own profile
+      allow write: if authed() && request.auth.uid == userId;
+    }
+  }
+}
