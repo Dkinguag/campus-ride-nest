@@ -58,6 +58,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <!-- Date Button -->
+        <Button
+            android:id="@+id/dateButton"
+            android:text="Select Date"
+            android:minHeight="48dp"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- Time Button -->
+        <Button
+            android:id="@+id/timeButton"
+            android:text="Select Time"
+            android:minHeight="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
         <!-- Action -->
         <Button
             android:id="@+id/btnCreateOffer"

@@ -1,5 +1,7 @@
 package com.booknest.campusridenest.ui;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,9 +17,20 @@ import com.booknest.campusridenest.ui.posts.PostsActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Calendar;
+
 public class OfferCreateActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
+    private Button dateButton;
+    private Button timeButton;
+
+    // Store selected date and time
+    private int selectedYear = -1;
+    private int selectedMonth = -1;
+    private int selectedDay = -1;
+    private int selectedHour = -1;
+    private int selectedMinute = -1;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -28,6 +41,10 @@ public class OfferCreateActivity extends AppCompatActivity {
         EditText etDest   = findViewById(R.id.etDestination);
         EditText etSeats  = findViewById(R.id.etSeats);
         Button btn        = findViewById(R.id.btnCreateOffer);
+
+        // Initialize date and time buttons
+        dateButton = findViewById(R.id.dateButton);
+        timeButton = findViewById(R.id.timeButton);
 
         OfferRepository repo = new OfferRepository();
         auth = FirebaseAuth.getInstance();
@@ -50,6 +67,12 @@ public class OfferCreateActivity extends AppCompatActivity {
             }
         });
 
+        // Date button click listener
+        dateButton.setOnClickListener(v -> showDatePicker());
+
+        // Time button click listener
+        timeButton.setOnClickListener(v -> showTimePicker());
+
         btn.setOnClickListener(v -> {
             String origin   = String.valueOf(etOrigin.getText()).trim();
             String dest     = String.valueOf(etDest.getText()).trim();
@@ -57,7 +80,7 @@ public class OfferCreateActivity extends AppCompatActivity {
 
             if (TextUtils.isEmpty(origin)) { etOrigin.setError("Required"); return; }
             if (TextUtils.isEmpty(dest))   { etDest.setError("Required");   return; }
-            if (TextUtils.isEmpty(seatsStr)) { etSeats.setError("Required"); return; }
+            if (TextUtils.isEmpty(seatsStr)) { etSeats.setError("Number"); return; }
 
             int seats;
             try { seats = Math.max(1, Integer.parseInt(seatsStr)); }
@@ -66,7 +89,16 @@ public class OfferCreateActivity extends AppCompatActivity {
             FirebaseUser u = auth.getCurrentUser();
             if (u == null) { Toast.makeText(this, "Not signed in.", Toast.LENGTH_LONG).show(); return; }
 
-            long when = System.currentTimeMillis();
+            // Check if date and time are selected
+            if (selectedYear == -1 || selectedHour == -1) {
+                Toast.makeText(this, "Please select date and time", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Create timestamp from selected date and time
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute, 0);
+            long when = calendar.getTimeInMillis();
 
             btn.setEnabled(false);
             repo.createOfferAsync(u.getUid(), origin, dest, when, seats, "open")
@@ -77,6 +109,15 @@ public class OfferCreateActivity extends AppCompatActivity {
                         etDest.setText("");
                         etSeats.setText("");
                         btn.setEnabled(true);
+
+                        // Reset date and time selections
+                        selectedYear = -1;
+                        selectedMonth = -1;
+                        selectedDay = -1;
+                        selectedHour = -1;
+                        selectedMinute = -1;
+                        dateButton.setText("Select Date");
+                        timeButton.setText("Select Time");
 
                         // Go to the posts list (optionally to the "Mine" tab)
                         Intent i = new Intent(this, PostsActivity.class);
@@ -90,5 +131,55 @@ public class OfferCreateActivity extends AppCompatActivity {
                     });
         });
     }
-}
 
+    private void showDatePicker() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                (view, selectedYear, selectedMonth, selectedDay) -> {
+                    // Save selected date
+                    this.selectedYear = selectedYear;
+                    this.selectedMonth = selectedMonth;
+                    this.selectedDay = selectedDay;
+
+                    // Update button text
+                    String dateText = (selectedMonth + 1) + "/" + selectedDay + "/" + selectedYear;
+                    dateButton.setText(dateText);
+                },
+                year, month, day
+        );
+
+
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        datePickerDialog.show();
+    }
+
+    private void showTimePicker() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+                this,
+                (view, selectedHour, selectedMinute) -> {
+                    // Save selected time
+                    this.selectedHour = selectedHour;
+                    this.selectedMinute = selectedMinute;
+
+                    // Update button text
+                    String amPm = selectedHour >= 12 ? "PM" : "AM";
+                    int displayHour = selectedHour % 12;
+                    if (displayHour == 0) displayHour = 12;
+                    String timeText = String.format("%d:%02d %s", displayHour, selectedMinute, amPm);
+                    timeButton.setText(timeText);
+                },
+                hour, minute, false // false = 12-hour format
+        );
+
+        timePickerDialog.show();
+    }
+}
