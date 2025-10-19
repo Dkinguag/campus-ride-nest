@@ -1,6 +1,12 @@
 plugins {
     id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+}
+
+kotlin {
+    // correct call signature — no named arg
+    jvmToolchain(17)
 }
 
 android {
@@ -13,40 +19,38 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
+    buildFeatures { viewBinding = true }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
+
+    testOptions { unitTests.isIncludeAndroidResources = true }
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-    implementation("com.google.android.material:material:1.12.0")
+
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+    implementation ("com.google.android.material:material:1.10.0")
+    implementation(libs.swiperefreshlayout)
+    coreLibraryDesugaring ("com.android.tools:desugar_jdk_libs:2.0.4")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-}
-
-if (file("$projectDir/google-services.json").exists()) {
-    apply(plugin = "com.google.gms.google-services")
 }
