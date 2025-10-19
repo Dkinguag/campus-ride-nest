@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">Campus Ride Nest</string>
+
+    <!-- Posts Screen -->
+    <string name="browse">Browse</string>
+    <string name="mine">Mine</string>
+
+    <!-- Error State -->
+    <string name="unable_to_load">Unable to load posts</string>
+    <string name="check_connection">Check your internet connection and try again.</string>
+    <string name="retry">Retry</string>
+    <string name="error_icon">Error icon</string>
+
+    <!-- Empty State -->
     <string name="no_posts_yet">No posts yet</string>
+    <string name="no_posts_description">No ride offers or requests have been posted.</string>
+    <string name="no_posts_icon">No posts icon</string>
 </resources>
