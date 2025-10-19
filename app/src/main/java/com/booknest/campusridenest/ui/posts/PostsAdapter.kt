@@ -16,7 +16,8 @@ import com.google.firebase.ktx.Firebase
 
 class PostsAdapter(
     private val onEdit: (PostUi) -> Unit,
-    private val onDelete: (PostUi) -> Unit
+    private val onDelete: (PostUi) -> Unit,
+    private val onClick: (PostUi) -> Unit
 ) : ListAdapter<PostUi, PostsAdapter.VH>(DIFF) {
 
     companion object {
@@ -28,7 +29,7 @@ class PostsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_post, parent, false)
-        return VH(v, onEdit, onDelete)
+        return VH(v, onEdit, onDelete, onClick)  // ← Pass onClick
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
@@ -37,7 +38,8 @@ class PostsAdapter(
 
     class VH(itemView: View,
              private val onEdit: (PostUi) -> Unit,
-             private val onDelete: (PostUi) -> Unit
+             private val onDelete: (PostUi) -> Unit,
+             private val onClick: (PostUi) -> Unit  // ← NEW
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val tvRoute: TextView = itemView.findViewById(R.id.tvRoute)
@@ -60,6 +62,10 @@ class PostsAdapter(
             val isMine = Firebase.auth.currentUser?.uid == item.ownerUid
             btnOverflow.visibility = if (isMine) View.VISIBLE else View.INVISIBLE
 
+            itemView.setOnClickListener {
+                onClick(item)
+            }
+
             btnOverflow.setOnClickListener { v ->
                 val menu = PopupMenu(v.context, v)
                 menu.menu.add(0, 1, 0, "Edit")
@@ -76,4 +82,3 @@ class PostsAdapter(
         }
     }
 }
-
