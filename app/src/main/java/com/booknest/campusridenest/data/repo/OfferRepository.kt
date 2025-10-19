@@ -81,7 +81,7 @@ class OfferRepository {
     // --- mapper used above ---
     private fun DocumentSnapshot.toRideOffer(): RideOffer? = try {
         val base = this.toObject(RideOffer::class.java)
-        base?.apply { id = this@toRideOffer.id }   // set the doc id
+        base?.apply { id = this@toRideOffer.id }
     } catch (_: Exception) {
         null
     }
