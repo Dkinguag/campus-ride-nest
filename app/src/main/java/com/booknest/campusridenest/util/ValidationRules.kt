@@ -1,30 +1,11 @@
 package com.booknest.campusridenest.util
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import java.time.LocalDateTime
+import java.util.*
 
-/**
- * Sealed class representing validation results.
- * Type-safe approach eliminates null-checking boilerplate.
- */
-sealed class ValidationResult {
-    object Valid : ValidationResult()
-    data class Invalid(val error: String) : ValidationResult()
-}
-
-/**
- * Reusable validation rules for form inputs.
- * Pure functions with no dependencies enable fast unit testing.
- */
+//Composable validation rules for form inputs
 object ValidationRules {
 
-    /**
-     * Validates that a string field is not empty or blank.
-     * @param value The string to validate
-     * @param fieldName The name of the field (for error messages)
-     * @return ValidationResult.Valid or ValidationResult.Invalid with error message
-     */
+    //Validate that a string field is not empty
     fun requireNonEmpty(value: String, fieldName: String): ValidationResult {
         return if (value.trim().isBlank()) {
             ValidationResult.Invalid("$fieldName is required")
@@ -33,14 +14,7 @@ object ValidationRules {
         }
     }
 
-    /**
-     * Validates that an integer is within a specified range.
-     * @param value The integer to validate (nullable)
-     * @param fieldName The name of the field (for error messages)
-     * @param min Minimum allowed value (inclusive)
-     * @param max Maximum allowed value (inclusive)
-     * @return ValidationResult.Valid or ValidationResult.Invalid with error message
-     */
+    //Validate that an integer is within a specified range
     fun requirePositiveInt(
         value: Int?,
         fieldName: String,
@@ -55,37 +29,91 @@ object ValidationRules {
         }
     }
 
-    /**
-     * Validates that a date/time is in the future.
-     * @param dateTime The LocalDateTime to validate (nullable)
-     * @return ValidationResult.Valid or ValidationResult.Invalid with error message
-     */
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun requireFutureDateTime(dateTime: LocalDateTime?): ValidationResult {
+    //Validate that a date/time is in the future
+    fun requireFutureDateTime(dateTime: Date?): ValidationResult {
+        if (dateTime == null) {
+            return ValidationResult.Invalid("Date and time are required")
+        }
+
+        val now = Date()
+        if (dateTime.before(now)) {
+            return ValidationResult.Invalid("Date and time must be in the future")
+        }
+
+        // Check not more than 1 year in future
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.YEAR, 1)
+        val oneYearFromNow = calendar.time
+
+        if (dateTime.after(oneYearFromNow)) {
+            return ValidationResult.Invalid("Date cannot be more than 1 year in the future")
+        }
+
+        return ValidationResult.Valid
+    }
+
+    //Validate email format
+    fun validateEmail(email: String): ValidationResult {
+        if (email.trim().isBlank()) {
+            return ValidationResult.Invalid("Email is required")
+        }
+
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
+        return if (emailRegex.matches(email)) {
+            ValidationResult.Valid
+        } else {
+            ValidationResult.Invalid("Please enter a valid email address")
+        }
+    }
+
+    //Validate .edu email (for university verification)
+    fun validateEduEmail(email: String): ValidationResult {
+        val baseValidation = validateEmail(email)
+        if (baseValidation is ValidationResult.Invalid) {
+            return baseValidation
+        }
+
+        return if (email.lowercase().endsWith(".edu")) {
+            ValidationResult.Valid
+        } else {
+            ValidationResult.Invalid("Must use a .edu email address")
+        }
+    }
+
+    //Validate password strength
+    fun validatePassword(password: String): ValidationResult {
         return when {
-            dateTime == null -> ValidationResult.Invalid("Date and time are required")
-            dateTime.isBefore(LocalDateTime.now()) ->
-                ValidationResult.Invalid("Date and time must be in the future")
+            password.length < 8 ->
+                ValidationResult.Invalid("Password must be at least 8 characters")
+            !password.any { it.isDigit() } ->
+                ValidationResult.Invalid("Password must contain at least one number")
+            !password.any { it.isLetter() } ->
+                ValidationResult.Invalid("Password must contain at least one letter")
             else -> ValidationResult.Valid
         }
     }
 
-    /**
-     * Validates an optional price string (must be positive number if provided).
-     * @param price The price string to validate
-     * @return ValidationResult.Valid or ValidationResult.Invalid with error message
-     */
-    fun validatePrice(price: String): ValidationResult {
-        if (price.isBlank()) {
-            return ValidationResult.Valid // Price is optional
-        }
-
-        val priceValue = price.toDoubleOrNull()
-        return when {
-            priceValue == null -> ValidationResult.Invalid("Price must be a valid number")
-            priceValue < 0 -> ValidationResult.Invalid("Price cannot be negative")
-            priceValue > 1000 -> ValidationResult.Invalid("Price cannot exceed $1000")
-            else -> ValidationResult.Valid
+    //Validate string length
+    fun validateMaxLength(value: String, fieldName: String, maxLength: Int): ValidationResult {
+        return if (value.length > maxLength) {
+            ValidationResult.Invalid("$fieldName cannot exceed $maxLength characters")
+        } else {
+            ValidationResult.Valid
         }
     }
+
+    //Validate that two fields match
+    fun requireMatch(value1: String, value2: String, fieldName: String): ValidationResult {
+        return if (value1 == value2) {
+            ValidationResult.Valid
+        } else {
+            ValidationResult.Invalid("$fieldName does not match")
+        }
+    }
+}
+
+//Sealed class representing validation result
+sealed class ValidationResult {
+    object Valid : ValidationResult()
+    data class Invalid(val error: String) : ValidationResult()
 }
