@@ -28,7 +28,7 @@ object ValidationRules {
             else -> ValidationResult.Valid
         }
     }
-
+    @JvmStatic
     //Validate that a date/time is in the future
     fun requireFutureDateTime(dateTime: Date?): ValidationResult {
         if (dateTime == null) {
@@ -51,7 +51,7 @@ object ValidationRules {
 
         return ValidationResult.Valid
     }
-
+    @JvmStatic
     //Validate email format
     fun validateEmail(email: String): ValidationResult {
         if (email.trim().isBlank()) {
@@ -65,7 +65,7 @@ object ValidationRules {
             ValidationResult.Invalid("Please enter a valid email address")
         }
     }
-
+    @JvmStatic
     //Validate .edu email (for university verification)
     fun validateEduEmail(email: String): ValidationResult {
         val baseValidation = validateEmail(email)
@@ -80,6 +80,7 @@ object ValidationRules {
         }
     }
 
+    @JvmStatic
     //Validate password strength
     fun validatePassword(password: String): ValidationResult {
         return when {
@@ -93,6 +94,7 @@ object ValidationRules {
         }
     }
 
+    @JvmStatic
     //Validate string length
     fun validateMaxLength(value: String, fieldName: String, maxLength: Int): ValidationResult {
         return if (value.length > maxLength) {
@@ -101,13 +103,67 @@ object ValidationRules {
             ValidationResult.Valid
         }
     }
-
+    @JvmStatic
     //Validate that two fields match
     fun requireMatch(value1: String, value2: String, fieldName: String): ValidationResult {
         return if (value1 == value2) {
             ValidationResult.Valid
         } else {
             ValidationResult.Invalid("$fieldName does not match")
+        }
+    }
+
+    @JvmStatic
+    // Validate origin location
+    fun validateOrigin(origin: String): String? {
+        return when {
+            origin.trim().isBlank() -> "Origin is required"
+            origin.length < 2 -> "Origin must be at least 2 characters"
+            origin.length > 100 -> "Origin cannot exceed 100 characters"
+            else -> null // null means valid
+        }
+    }
+
+    @JvmStatic
+    // Validate destination location
+    fun validateDestination(destination: String): String? {
+        return when {
+            destination.trim().isBlank() -> "Destination is required"
+            destination.length < 2 -> "Destination must be at least 2 characters"
+            destination.length > 100 -> "Destination cannot exceed 100 characters"
+            else -> null // null means valid
+        }
+    }
+
+    @JvmStatic
+    // Validate number of seats
+    fun validateSeats(seats: Int): String? {
+        return when {
+            seats < 1 -> "At least 1 seat is required"
+            seats > 8 -> "Cannot exceed 8 seats"
+            else -> null // null means valid
+        }
+    }
+
+    @JvmStatic
+    // Validate price
+    fun validatePrice(price: Int): String? {
+        return when {
+            price < 0 -> "Price cannot be negative"
+            price > 10000 -> "Price seems too high (max: $10,000)"
+            else -> null // null means valid
+        }
+    }
+
+    @JvmStatic
+    // Validate future date/time (wrapper that returns String?)
+    fun validateFutureDateTime(dateTimeMillis: Long): String? {
+        val dateTime = Date(dateTimeMillis)
+        val result = requireFutureDateTime(dateTime)
+        return if (result is ValidationResult.Invalid) {
+            result.error
+        } else {
+            null
         }
     }
 }
