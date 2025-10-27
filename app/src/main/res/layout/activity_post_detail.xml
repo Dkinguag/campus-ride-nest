@@ -127,5 +127,47 @@
             android:textSize="16sp"
             android:minHeight="56dp"
             android:layout_marginTop="8dp" />
+
+        <!-- Action Buttons for Post Owner (Edit and Close side by side) -->
+        <LinearLayout
+            android:id="@+id/ownerButtonsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btn_edit_post"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Edit"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Edit this post"/>
+
+            <Button
+                android:id="@+id/btn_close_post"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Close Post"
+                android:contentDescription="Close this post"/>
+        </LinearLayout>
+
+        <!-- Reopen Button (separate, full width) -->
+        <Button
+            android:id="@+id/btn_reopen_post"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reopen"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"
+            android:contentDescription="Reopen this post"/>
+
     </LinearLayout>
+
 </ScrollView>
