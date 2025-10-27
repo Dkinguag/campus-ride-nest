@@ -1,6 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<!-- activity_edit_post.xml -->
+<!-- Sprint 3 US-05: Edit Post UI -->
+<!-- Sprint 3 US-11: Uses ScrollView to fix keyboard obscuring fields -->
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header Text -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edit Post Details"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="Edit post form header"/>
+
+        <!-- Origin Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_from"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Origin"
+            app:startIconDrawable="@android:drawable/ic_menu_mylocation"
+            app:startIconContentDescription="Origin location"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_from"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLength="200"
+                android:contentDescription="Enter origin location"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Destination Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_to"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Destination"
+            app:startIconDrawable="@android:drawable/ic_menu_myplaces"
+            app:startIconContentDescription="Destination location"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLength="200"
+                android:contentDescription="Enter destination location"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Date & Time Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ride Date and Time"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <Button
+                android:id="@+id/btn_select_date"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Select Date"
+                android:layout_marginEnd="8dp"
+                app:icon="@android:drawable/ic_menu_my_calendar"
+                android:contentDescription="Select ride date"/>
+
+            <Button
+                android:id="@+id/btn_select_time"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Select Time"
+                android:layout_marginStart="8dp"
+                app:icon="@android:drawable/ic_menu_recent_history"
+                android:contentDescription="Select ride time"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_selected_datetime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textColor="?attr/colorPrimary"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="@android:drawable/dialog_holo_light_frame"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="Selected date and time"/>
+
+        <!-- Seats Field -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_seats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Number of Seats"
+            app:startIconDrawable="@android:drawable/ic_menu_agenda"
+            app:startIconContentDescription="Number of seats"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_seats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="1"
+                android:contentDescription="Enter number of seats (1-8)"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Price Field (Offers only) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Price (USD)"
+            app:prefixText="$"
+            app:startIconDrawable="@android:drawable/ic_menu_sort_by_size"
+            app:startIconContentDescription="Price in dollars"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="24dp"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="4"
+                android:contentDescription="Enter price in dollars"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/btn_save_changes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Changes"
+            android:textSize="16sp"
+            android:padding="16dp"
+            android:contentDescription="Save changes to post"
+            style="@style/Widget.MaterialComponents.Button"/>
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:contentDescription="Saving changes"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
