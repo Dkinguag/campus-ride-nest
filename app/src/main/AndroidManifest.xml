@@ -43,6 +43,20 @@
             android:name=".ui.posts.PostDetailActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.posts.EditPostActivity"
+            android:label="Edit Post"
+            android:parentActivityName=".ui.posts.PostDetailActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false"/>
+
+        <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:label="User Profile"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

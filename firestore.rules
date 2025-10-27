@@ -53,6 +53,7 @@ service cloud.firestore {
         && req.dateTime is timestamp
         && req.createdAt is timestamp
         && req.updatedAt is timestamp
+
         // Optional fields validation
         && (!req.keys().hasAny(['price']) || (req.price is number && req.price >= 0 && req.price <= 1000))
         && (!req.keys().hasAny(['notes']) || (req.notes is string && req.notes.size() <= 500));
