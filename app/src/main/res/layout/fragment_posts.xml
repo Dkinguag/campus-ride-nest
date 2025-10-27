@@ -8,6 +8,30 @@
     android:padding="12dp"
     tools:context=".ui.posts.PostsFragment">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <ImageButton
+            android:id="@+id/btn_filter"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_menu_search"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Filter posts"
+            android:layout_gravity="end"/>
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <!-- Add this chip below the toolbar -->
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_filter_active"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:closeIconVisible="true"
+        android:layout_margin="8dp"/>
+
     <!-- Toggle Buttons: Browse vs Mine -->
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggle"
