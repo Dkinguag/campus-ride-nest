@@ -1,21 +1,26 @@
 package com.booknest.campusridenest.data.repo
 
+import android.util.Log
 import com.booknest.campusridenest.model.RideRequest
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.tasks.await
 
 class RequestRepository {
 
     private val collectionPath = "requests"
     private val db = Firebase.firestore
     private val col get() = db.collection(collectionPath)
+    private val firestore = FirebaseFirestore.getInstance()
 
     @JvmOverloads
     fun createRequestAsync(
@@ -75,6 +80,26 @@ class RequestRepository {
                 trySend(list)
             }
         awaitClose { reg.remove() }
+    }
+
+    suspend fun updateRequest(requestId: String, updates: Map<String, Any>): Result<Unit> {
+        return try {
+            // Add server timestamp to updates
+            val updatesWithTimestamp = updates.toMutableMap().apply {
+                put("updatedAt", FieldValue.serverTimestamp())
+            }
+
+            firestore.collection("requests")
+                .document(requestId)
+                .update(updatesWithTimestamp)
+                .await()
+
+            Log.d("RequestRepository", "Successfully updated request $requestId")
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Log.e("RequestRepository", "Failed to update request $requestId", e)
+            Result.failure(e)
+        }
     }
 
     // --- mapper used above ---
