@@ -29,11 +29,13 @@
 
         <activity
             android:name=".ui.OfferCreateActivity"
-            android:exported="false" />
+            android:windowSoftInputMode="adjustResize"
+            android:label="Create Offer" />
 
         <activity
             android:name=".ui.RequestCreateActivity"
-            android:exported="false" />
+            android:windowSoftInputMode="adjustResize"
+            android:label="Create Request" />
 
         <activity
             android:name=".ui.posts.PostsActivity"
