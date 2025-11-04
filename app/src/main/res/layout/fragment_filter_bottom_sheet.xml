@@ -22,7 +22,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Origin"
+        android:hint="Origin (e.g., Campus, Park)"
         app:startIconDrawable="@android:drawable/ic_menu_mylocation"
         app:startIconContentDescription="Filter by origin"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -40,7 +40,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Destination"
+        android:hint="Destination (e.g., Airport, Mall)"
         app:startIconDrawable="@android:drawable/ic_menu_myplaces"
         app:startIconContentDescription="Filter by destination"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -64,36 +64,38 @@
         android:layout_marginBottom="12dp"
         android:contentDescription="Date range filter section"/>
 
-    <LinearLayout
+    <!-- Radio Group for Date Range -->
+    <RadioGroup
+        android:id="@+id/rg_date_range"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginBottom="24dp">
 
-        <!-- Start Date Button -->
-        <Button
-            android:id="@+id/btn_start_date"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
+        <RadioButton
+            android:id="@+id/rb_no_date"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Start Date"
-            android:layout_marginEnd="8dp"
-            app:icon="@android:drawable/ic_menu_my_calendar"
-            android:contentDescription="Select start date for filter"/>
+            android:text="Any Date"
+            android:checked="true"
+            android:contentDescription="No date filter"
+            android:paddingVertical="8dp"/>
 
-        <!-- End Date Button -->
-        <Button
-            android:id="@+id/btn_end_date"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="0dp"
+        <RadioButton
+            android:id="@+id/rb_this_week"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="End Date"
-            android:layout_marginStart="8dp"
-            app:icon="@android:drawable/ic_menu_my_calendar"
-            android:contentDescription="Select end date for filter"/>
-    </LinearLayout>
+            android:text="This Week (Mon - Sun)"
+            android:contentDescription="Filter posts for this week"
+            android:paddingVertical="8dp"/>
+
+        <RadioButton
+            android:id="@+id/rb_next_week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Next Week (Mon - Sun)"
+            android:contentDescription="Filter posts for next week"
+            android:paddingVertical="8dp"/>
+    </RadioGroup>
 
     <!-- Action Buttons -->
     <LinearLayout

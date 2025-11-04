@@ -7,14 +7,15 @@ fun RideOffer.toPostUi(): PostUi {
     val safeUpdatedAt = (updatedAt as? Number)?.toLong() ?: System.currentTimeMillis()
 
     return PostUi(
-        id          = id.orEmpty(),
-        type        = "offer",
-        ownerUid    = ownerUid.orEmpty(),
-        from        = from.orEmpty(),
-        to          = to.orEmpty(),
-        dateTime    = dateTime?.toString() ?: timeMillis.toString(),
-        seats       = seats,
-        updatedAt   = safeUpdatedAt
+        id = id.orEmpty(),
+        type = "offer",
+        ownerUid = ownerUid.orEmpty(),
+        from = from.orEmpty(),
+        to = to.orEmpty(),
+        dateTime = dateTime?.toString() ?: timeMillis.toString(),
+        seats = seats,
+        updatedAt = safeUpdatedAt,
+        status = (status ?: "open").toString(),
     )
 }
 
@@ -22,13 +23,15 @@ fun RideRequest.toPostUi(): PostUi {
     val safeUpdatedAt = (updatedAt as? Number)?.toLong() ?: System.currentTimeMillis()
 
     return PostUi(
-        id        = id.orEmpty(),
-        type      = "request",
-        ownerUid  = ownerUid.orEmpty(),
+        id = id.orEmpty(),
+        type = "request",
+        ownerUid = ownerUid.orEmpty(),
         from = from.orEmpty(),
         to = to.orEmpty(),
-        dateTime  = dateTime?.toString() ?: timeMillis.toString(),
-        seats     = null,
-        updatedAt = safeUpdatedAt
+        dateTime = dateTime?.toString() ?: timeMillis.toString(),
+        seats = null,
+        updatedAt = safeUpdatedAt,
+        status = (status ?: "open").toString(),
+        price = null
     )
 }

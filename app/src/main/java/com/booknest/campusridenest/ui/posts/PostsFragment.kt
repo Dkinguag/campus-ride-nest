@@ -2,9 +2,8 @@ package com.booknest.campusridenest.ui.posts
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -17,12 +16,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.booknest.campusridenest.R
 import com.booknest.campusridenest.ui.posts.PostsViewModel.UiState
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PostsFragment : Fragment(R.layout.fragment_posts) {
 
+    // Use viewModels() delegate - automatically provides SavedStateHandle
     private val vm: PostsViewModel by viewModels()
 
     private lateinit var list: RecyclerView
@@ -35,7 +36,7 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize views
+        // Views
         list = view.findViewById(R.id.list)
         empty = view.findViewById(R.id.empty)
         toggle = view.findViewById(R.id.toggle)
@@ -71,22 +72,87 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
                 }
             }
         }
+
+        // Setup filter UI
+        setupFilterUI(view)
     }
 
-    //Open detail screen
+    // Setup filter button and chip
+    private fun setupFilterUI(view: View) {
+        val btnFilter = view.findViewById<ImageButton>(R.id.btn_filter)
+        val chipFilterActive = view.findViewById<Chip>(R.id.chip_filter_active)
+
+        // Filter button click - open bottom sheet
+        btnFilter?.setOnClickListener {
+            val filterSheet = FilterBottomSheetFragment()
+            filterSheet.show(childFragmentManager, FilterBottomSheetFragment.TAG)
+        }
+
+        // Observe filter state using StateFlow
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.filterState.collectLatest { filterState ->
+                    chipFilterActive?.let { updateFilterChip(it, filterState) }
+                }
+            }
+        }
+    }
+
+    // Update filter chip based on FilterState
+    private fun updateFilterChip(chip: Chip, filterState: FilterState) {
+        if (filterState.isActive) {
+            chip.visibility = View.VISIBLE
+            chip.text = "${filterState.activeCount} filter${if (filterState.activeCount > 1) "s" else ""}"
+            chip.setOnCloseIconClickListener {
+                vm.clearFilters()
+            }
+        } else {
+            chip.visibility = View.GONE
+        }
+    }
+
+    // Open detail screen
     private fun openPostDetail(post: PostUi) {
         val intent = Intent(requireContext(), PostDetailActivity::class.java).apply {
-            putExtra("POST_ID", post.id)
-            putExtra("TYPE", post.type)
-            putExtra("FROM", post.from)
-            putExtra("TO", post.to)
-            putExtra("DATE_TIME", when (val dt = post.dateTime) {
-                is String -> dt.toLongOrNull()?.toShortDateTime() ?: dt
-                is Number -> dt.toLong().toShortDateTime()
-                else -> dt?.toString() ?: ""
-            })
-            putExtra("SEATS", post.seats ?: 0)
-            putExtra("OWNER_UID", post.ownerUid)
+            putExtra("postId", post.id)
+            putExtra("type", post.type)
+            putExtra("from", post.from)
+            putExtra("to", post.to)
+
+            // Convert dateTime to long timestamp - handle any type
+            val dateTimeLong = try {
+                val dt = post.dateTime
+                when {
+                    dt == null -> 0L
+                    dt is Long -> dt
+                    dt is Number -> dt.toLong()
+                    dt is String -> dt.toLongOrNull() ?: 0L
+                    // Handle Firestore Timestamp by checking class name
+                    dt.javaClass.simpleName == "Timestamp" -> {
+                        // Use reflection to get seconds field
+                        val secondsField = dt.javaClass.getField("seconds")
+                        (secondsField.get(dt) as Long) * 1000
+                    }
+                    else -> 0L
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("PostsFragment", "Error converting dateTime: ${e.message}")
+                0L
+            }
+            putExtra("dateTime", dateTimeLong)
+
+            putExtra("seats", post.seats ?: 0)
+            putExtra("ownerUid", post.ownerUid)
+
+            // FIXED: Pass actual status from post, default to "open" if null
+            putExtra("status", post.status ?: "open")
+
+            // FIXED: Pass actual price from post if it's an offer
+            if (post.type.equals("offer", ignoreCase = true)) {
+                putExtra("price", post.price ?: 0)
+            } else {
+                putExtra("price", 0)
+            }
         }
         startActivity(intent)
     }
@@ -94,7 +160,7 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
     // Browse = everyone's open offers/requests
     private fun startObservingBrowse() {
         swapCollector {
-            vm.loadBrowse() // optional "pull to refresh" trigger, safe to call
+            vm.loadBrowse()
             vm.browse.collectLatest { render(it) }
         }
     }
@@ -107,8 +173,7 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
         }
     }
 
-    // Cancels the previous collect job and starts a new one scoped to viewLifecycle so it automatically stops/starts with STARTED state.
-
+    // Cancels the previous collect job and starts a new one
     private fun swapCollector(block: suspend () -> Unit) {
         observeJob?.cancel()
         observeJob = viewLifecycleOwner.lifecycleScope.launch {

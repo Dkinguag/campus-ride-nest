@@ -12,7 +12,9 @@ data class PostUi(
     val to: String,
     val dateTime: Serializable?,
     val seats: Int?,
-    val updatedAt: Any
+    val updatedAt: Any,
+    val status: String? = "open",
+    val price: Int? = null
 )
 
 fun Long.toShortDateTime(): String {
