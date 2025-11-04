@@ -100,10 +100,16 @@ public class OfferCreateActivity extends AppCompatActivity {
             calendar.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute, 0);
             long when = calendar.getTimeInMillis();
 
-            btn.setEnabled(false);
             repo.createOfferAsync(u.getUid(), origin, dest, when, seats, "open")
                     .addOnSuccessListener(id -> {
                         Toast.makeText(this, "Offer created!", Toast.LENGTH_SHORT).show();
+
+                        // NEW: Increment active post count in profile
+                        com.booknest.campusridenest.data.repo.ProfileRepository.getInstance()
+                                .incrementActivePosts(u.getUid())
+                                .addOnFailureListener(e -> {
+                                    android.util.Log.e("OfferCreateActivity", "Failed to update profile stats", e);
+                                });
 
                         etOrigin.setText("");
                         etDest.setText("");
@@ -119,7 +125,7 @@ public class OfferCreateActivity extends AppCompatActivity {
                         dateButton.setText("Select Date");
                         timeButton.setText("Select Time");
 
-                        // Go to the posts list (optionally to the "Mine" tab)
+                        // Go to the posts list
                         Intent i = new Intent(this, PostsActivity.class);
                         i.putExtra("tab", "mine"); // or "browse"
                         startActivity(i);

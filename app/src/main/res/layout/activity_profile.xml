@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:background="#F5F5F5">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="16dp">
 
-        <!-- Profile Header Card -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- Profile Card -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="4dp"
-            app:cardCornerRadius="12dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -26,7 +23,7 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- Display Name with Verification Badge -->
+                <!-- Display Name with Verified Badge -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -39,44 +36,46 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="User Name"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-                        android:textStyle="bold"/>
+                        android:text="John Doe"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/iv_verified_badge"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:src="@android:drawable/presence_online"
-                        android:visibility="gone"/>
+                        android:src="@android:drawable/checkbox_on_background"
+                        android:contentDescription="Email verified badge"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <!-- Email -->
                 <TextView
                     android:id="@+id/tv_email"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="user@example.com"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    android:layout_marginBottom="16dp"/>
+                    android:text="john.doe@example.com"
+                    android:textSize="16sp"
+                    android:textColor="#666666"
+                    android:layout_marginBottom="16dp" />
 
                 <!-- Member Since -->
                 <TextView
                     android:id="@+id/tv_member_since"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Member since January 2025"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"/>
+                    android:text="Member since October 2025"
+                    android:textSize="14sp"
+                    android:textColor="#999999" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
-        <!-- Post Statistics Card -->
-        <com.google.android.material.card.MaterialCardView
+        <!-- Statistics Card -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="4dp"
-            app:cardCornerRadius="12dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,40 +84,38 @@
                 android:padding="24dp">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ride Statistics"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:layout_marginBottom="16dp"/>
+                    android:text="Post Statistics"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
 
-                <!-- Active Posts -->
                 <TextView
                     android:id="@+id/tv_active_posts"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Active: 0"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    android:layout_marginBottom="12dp"/>
+                    android:text="Active: 5"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
 
-                <!-- Closed Posts -->
                 <TextView
                     android:id="@+id/tv_closed_posts"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Closed: 0"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                    android:layout_marginBottom="12dp"/>
+                    android:text="Closed: 12"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="8dp" />
 
-                <!-- Total Posts -->
                 <TextView
                     android:id="@+id/tv_total_posts"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total: 0"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    android:textStyle="bold"/>
+                    android:text="Total: 17"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+        </androidx.cardview.widget.CardView>
 
         <!-- Edit Profile Button -->
         <Button
@@ -126,17 +123,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Edit Profile"
-            android:visibility="gone"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+            android:textSize="16sp"
+            android:visibility="gone" />
 
-        <!-- Progress Bar -->
+        <!-- Loading Indicator -->
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="24dp"
-            android:visibility="gone"/>
+            android:layout_marginTop="32dp"
+            android:visibility="gone" />
 
     </LinearLayout>
+
 </ScrollView>

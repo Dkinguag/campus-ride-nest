@@ -107,6 +107,13 @@ public class RequestCreateActivity extends AppCompatActivity {
                     .addOnSuccessListener(id -> {
                         Toast.makeText(this, "Request created!", Toast.LENGTH_SHORT).show();
 
+                        // NEW: Increment active post count in profile
+                        com.booknest.campusridenest.data.repo.ProfileRepository.getInstance()
+                                .incrementActivePosts(u.getUid())
+                                .addOnFailureListener(e -> {
+                                    android.util.Log.e("RequestCreateActivity", "Failed to update profile stats", e);
+                                });
+
                         etOrigin.setText("");
                         etDest.setText("");
                         etSeats.setText("");
