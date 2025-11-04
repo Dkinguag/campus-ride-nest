@@ -14,6 +14,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.booknest.campusridenest.R;
+import com.booknest.campusridenest.data.repo.ProfileRepository;
+import com.booknest.campusridenest.ui.profile.ProfileActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AlertDialog;
@@ -30,6 +32,8 @@ import com.google.firebase.Timestamp;
 public class PostDetailActivity extends AppCompatActivity {
 
     private Button btnEdit, btnClosePost, btnReopenPost;
+    private TextView tvOwnerName;  // NEW
+    private View ownerNameLayout;  // NEW
     private static final int REQUEST_EDIT_POST = 100;
 
     // Post data variables
@@ -64,7 +68,6 @@ public class PostDetailActivity extends AppCompatActivity {
         postStatus = intent.getStringExtra("status");
         if (postStatus == null) postStatus = "open";
 
-
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid()
                 : null;
@@ -80,6 +83,10 @@ public class PostDetailActivity extends AppCompatActivity {
         btnClosePost = findViewById(R.id.btn_close_post);
         btnReopenPost = findViewById(R.id.btn_reopen_post);
 
+        // NEW: Owner name views
+        tvOwnerName = findViewById(R.id.tvOwnerName);
+        ownerNameLayout = findViewById(R.id.ownerNameLayout);
+
         // Show/hide buttons based on ownership and status
         setupOwnerButtons();
 
@@ -92,6 +99,9 @@ public class PostDetailActivity extends AppCompatActivity {
 
         tvDateTime.setText(dateTime > 0 ? formatDateTime(dateTime) : "No date specified");
         tvSeats.setText("Seats: " + seats);
+
+        // NEW: Load owner name
+        loadOwnerName();
 
         // Action button
         if (isOwnPost) {
@@ -112,6 +122,44 @@ public class PostDetailActivity extends AppCompatActivity {
 
         // Back button
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+    }
+
+    // NEW: Load and display owner name
+    private void loadOwnerName() {
+        if (ownerUid == null || ownerUid.isEmpty()) {
+            tvOwnerName.setText("Unknown User");
+            return;
+        }
+
+        ProfileRepository.getInstance()
+                .getProfile(ownerUid)
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String displayName = documentSnapshot.getString("displayName");
+                        tvOwnerName.setText(displayName != null ? displayName : "User");
+                    } else {
+                        tvOwnerName.setText("User");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error loading owner name", e);
+                    tvOwnerName.setText("User");
+                });
+
+        // NEW: Make owner name clickable to open profile
+        ownerNameLayout.setOnClickListener(v -> openOwnerProfile());
+    }
+
+    // NEW: Open owner's profile
+    private void openOwnerProfile() {
+        if (ownerUid == null || ownerUid.isEmpty()) {
+            Toast.makeText(this, "Cannot load profile", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra(ProfileActivity.EXTRA_USER_ID, ownerUid);
+        startActivity(intent);
     }
 
     private String formatDateTime(long timestamp) {
@@ -183,8 +231,17 @@ public class PostDetailActivity extends AppCompatActivity {
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Post closed successfully", Toast.LENGTH_SHORT).show();
-                    setResult(RESULT_OK);
-                    finish();
+
+                    // Update local status and refresh UI
+                    postStatus = "closed";
+                    setupOwnerButtons();
+
+                    // NEW: Update profile statistics (decrement active, increment closed)
+                    ProfileRepository.getInstance()
+                            .closePost(ownerUid)
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to update profile stats", e);
+                            });
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to close post", Toast.LENGTH_SHORT).show();
@@ -202,8 +259,23 @@ public class PostDetailActivity extends AppCompatActivity {
                 .update(updates)
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Post reopened successfully", Toast.LENGTH_SHORT).show();
-                    setResult(RESULT_OK);
-                    finish();
+
+                    // Update local status and refresh UI
+                    postStatus = "open";
+                    setupOwnerButtons();
+
+                    // NEW: Update profile statistics (increment active, decrement closed)
+                    Map<String, Object> profileUpdates = new HashMap<>();
+                    profileUpdates.put("activePosts", FieldValue.increment(1));
+                    profileUpdates.put("closedPosts", FieldValue.increment(-1));
+
+                    FirebaseFirestore.getInstance()
+                            .collection("users")
+                            .document(ownerUid)
+                            .update(profileUpdates)
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to update profile stats", e);
+                            });
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(this, "Failed to reopen post", Toast.LENGTH_SHORT).show();
