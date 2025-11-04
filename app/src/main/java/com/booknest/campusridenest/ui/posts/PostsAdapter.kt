@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.booknest.campusridenest.R
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.Timestamp
 
 class PostsAdapter(
     private val onEdit: (PostUi) -> Unit,
@@ -51,10 +52,20 @@ class PostsAdapter(
 
             val seatsText = item.seats?.let { " • $it seats" } ?: ""
 
-            val metaDate = when (val dt = item.dateTime) {
-                is String  -> dt.toLongOrNull()?.toShortDateTime() ?: dt
-                is Number  -> dt.toLong().toShortDateTime()
-                else       -> dt?.toString() ?: ""
+            val metaDate = try {
+                val dt = item.dateTime
+                if (dt.toString().contains("Timestamp")) {
+                    // Extract seconds from Timestamp string
+                    val secondsMatch = Regex("seconds=(\\d+)").find(dt.toString())
+                    val seconds = secondsMatch?.groupValues?.get(1)?.toLongOrNull() ?: 0L
+                    (seconds * 1000).toShortDateTime()
+                } else when (dt) {
+                    is Long -> dt.toShortDateTime()
+                    is String -> dt.toLongOrNull()?.toShortDateTime() ?: dt
+                    else -> ""
+                }
+            } catch (e: Exception) {
+                ""
             }
 
             tvMeta.text = "$metaDate • ${item.type}$seatsText"

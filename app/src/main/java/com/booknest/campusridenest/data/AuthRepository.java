@@ -27,4 +27,5 @@ public class AuthRepository {
         FirebaseUser u = auth.getCurrentUser();
         return (u == null) ? null : u.getUid();
     }
+
 }
