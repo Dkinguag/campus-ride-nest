@@ -1,202 +1,265 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:fillViewport="true">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header with Back Button -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Back Button - ACCESSIBILITY FIXED -->
+        <ImageButton
+            android:id="@+id/backButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_revert"
+            android:contentDescription="@string/cd_back_button"
+            android:nextFocusForward="@id/statusBadge"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Status Badge -->
+        <TextView
+            android:id="@+id/statusBadge"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/holo_blue_dark"
+            android:padding="8dp"
+            android:text="OFFER"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:contentDescription="@string/cd_badge_offer"
+            android:nextFocusForward="@id/routeText"
+            app:layout_constraintBottom_toBottomOf="@id/backButton"
+            app:layout_constraintStart_toEndOf="@id/backButton"
+            app:layout_constraintTop_toTopOf="@id/backButton" />
+
+        <!-- Route Information -->
+        <LinearLayout
+            android:id="@+id/routeLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/backButton">
 
-            <Button
-                android:id="@+id/btnBack"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:text="←"
-                android:textSize="24sp"
-                style="@style/Widget.Material3.Button.TextButton" />
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_directions"
+                android:contentDescription="@string/cd_route_icon" />
 
             <TextView
+                android:id="@+id/routeText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
                 android:layout_weight="1"
-                android:text="Post Details"
+                android:text="Campus → Airport"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:gravity="center" />
-
-            <!-- Spacer for balance -->
-            <View
-                android:layout_width="48dp"
-                android:layout_height="48dp" />
+                android:nextFocusForward="@id/dateTimeLayout" />
         </LinearLayout>
 
-        <!-- Card Container -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
+        <!-- Date/Time -->
+        <LinearLayout
+            android:id="@+id/dateTimeLayout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:elevation="4dp">
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:nextFocusForward="@id/seatsLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/routeLayout">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_my_calendar"
+                android:contentDescription="@string/cd_calendar_icon" />
+
+            <TextView
+                android:id="@+id/dateTimeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Nov 15, 2025 at 3:00 PM"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Seats -->
+        <LinearLayout
+            android:id="@+id/seatsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:nextFocusForward="@id/priceLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dateTimeLayout">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                android:contentDescription="@string/cd_seats_icon" />
+
+            <TextView
+                android:id="@+id/seatsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="3 seats"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Price (for offers only) -->
+        <LinearLayout
+            android:id="@+id/priceLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            android:nextFocusForward="@id/ownerLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/seatsLayout">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_info_details"
+                android:contentDescription="@string/cd_price_icon" />
+
+            <TextView
+                android:id="@+id/priceText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="$15 per seat"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Owner Info - Clickable for Profile -->
+        <LinearLayout
+            android:id="@+id/ownerLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="12dp"
+            android:nextFocusForward="@id/editButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/priceLayout">
+
+            <!-- Profile Avatar - ACCESSIBILITY FIXED to 48dp -->
+            <ImageView
+                android:id="@+id/ownerAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@android:drawable/ic_menu_myplaces"
+                android:contentDescription="@string/cd_post_avatar" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical">
 
-                <!-- NEW: Owner Name (Clickable) -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:id="@+id/ownerNameLayout">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Posted by: "
-                        android:textSize="14sp"
-                        android:textColor="#666666" />
-
-                    <TextView
-                        android:id="@+id/tvOwnerName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Loading..."
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#6200EE" />
-                </LinearLayout>
-
-                <!-- Type Badge -->
                 <TextView
-                    android:id="@+id/tvType"
+                    android:id="@+id/ownerName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="OFFER"
+                    android:text="John Smith"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/ownerEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="jsmith@psu.edu"
                     android:textSize="14sp"
-                    android:textColor="#6200EE"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Route -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Route"
-                    android:textSize="12sp"
-                    android:textColor="#666666"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/tvRoute"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="HUB → Main Building"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Date & Time -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date + Time"
-                    android:textSize="12sp"
-                    android:textColor="#666666"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/tvDateTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Oct 18, 6:13 PM"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Seats -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Available Seats"
-                    android:textSize="12sp"
-                    android:textColor="#666666"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:id="@+id/tvSeats"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Seats: 2"
-                    android:textSize="18sp" />
+                    android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
 
-        <!-- Action Button -->
-        <Button
-            android:id="@+id/btnAction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Request This Ride"
-            android:textSize="16sp"
-            android:minHeight="56dp"
-            android:layout_marginTop="8dp" />
-
-        <!-- Action Buttons for Post Owner (Edit and Close side by side) -->
-        <LinearLayout
-            android:id="@+id/ownerButtonsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/btn_edit_post"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Edit"
-                android:layout_marginEnd="8dp"
-                android:contentDescription="Edit this post"/>
-
-            <Button
-                android:id="@+id/btn_close_post"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Close Post"
-                android:contentDescription="Close this post"/>
+            <ImageView
+                android:id="@+id/verificationBadge"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_info_details"
+                android:contentDescription="@string/cd_verification_badge_verified" />
         </LinearLayout>
 
-        <!-- Reopen Button (separate, full width) -->
-        <Button
-            android:id="@+id/btn_reopen_post"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="match_parent"
+        <!-- Action Buttons (visible only for owned posts) -->
+        <LinearLayout
+            android:id="@+id/actionButtonsLayout"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Reopen"
+            android:layout_marginTop="24dp"
+            android:orientation="horizontal"
             android:visibility="gone"
-            android:layout_marginTop="8dp"
-            android:contentDescription="Reopen this post"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ownerLayout">
 
-    </LinearLayout>
+            <!-- Edit Button - ACCESSIBILITY FIXED to 48dp minHeight -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:minHeight="48dp"
+                android:text="Edit Post"
+                android:contentDescription="@string/cd_edit_button"
+                android:nextFocusForward="@id/closeButton"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
 
+            <!-- Close Button - ACCESSIBILITY FIXED to 48dp minHeight -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/closeButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:minHeight="48dp"
+                android:text="Close Post"
+                android:contentDescription="@string/cd_close_post_button"
+                style="@style/Widget.Material3.Button" />
+        </LinearLayout>
+
+        <!-- Reopen Button (visible for closed posts) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/reopenButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:minHeight="48dp"
+            android:text="Reopen Post"
+            android:visibility="gone"
+            android:contentDescription="@string/cd_reopen_post_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ownerLayout"
+            style="@style/Widget.Material3.Button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

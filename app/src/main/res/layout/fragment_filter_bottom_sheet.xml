@@ -1,129 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- fragment_filter_bottom_sheet.xml -->
-<!-- Sprint 3 US-08: Filter posts UI with Material3 components -->
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="16dp">
 
     <!-- Header -->
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/filterTitle"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Filter Posts"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-        android:layout_marginBottom="24dp"
-        android:contentDescription="Filter posts header"/>
+        android:text="Filter Rides"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:nextFocusForward="@id/closeButton"
+        app:layout_constraintEnd_toStartOf="@id/closeButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Origin Filter -->
+    <!-- Close Button - ACCESSIBILITY FIXED to 48dp -->
+    <ImageButton
+        android:id="@+id/closeButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:contentDescription="@string/cd_filter_close"
+        android:nextFocusForward="@id/et_filter_origin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Origin Input - ID MATCHES KOTLIN CODE -->
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
+        android:id="@+id/originInputLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Origin (e.g., Campus, Park)"
-        app:startIconDrawable="@android:drawable/ic_menu_mylocation"
-        app:startIconContentDescription="Filter by origin"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_marginBottom="16dp">
+        android:layout_marginTop="24dp"
+        android:hint="Origin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filterTitle"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_filter_origin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:contentDescription="Enter origin to filter"/>
+            android:minHeight="48dp"
+            android:contentDescription="@string/cd_origin_input"
+            android:nextFocusForward="@id/et_filter_destination"
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Destination Filter -->
+    <!-- Destination Input - ID MATCHES KOTLIN CODE -->
     <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
+        android:id="@+id/destinationInputLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Destination (e.g., Airport, Mall)"
-        app:startIconDrawable="@android:drawable/ic_menu_myplaces"
-        app:startIconContentDescription="Filter by destination"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_marginBottom="16dp">
+        android:layout_marginTop="16dp"
+        android:hint="Destination"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/originInputLayout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_filter_destination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:contentDescription="Enter destination to filter"/>
+            android:minHeight="48dp"
+            android:contentDescription="@string/cd_destination_input"
+            android:nextFocusForward="@id/rb_this_week"
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Date Range Section -->
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/dateRangeLabel"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="Date Range"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="12dp"
-        android:contentDescription="Date range filter section"/>
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/destinationInputLayout" />
 
-    <!-- Radio Group for Date Range -->
+    <!-- RadioGroup - ID MATCHES KOTLIN CODE -->
     <RadioGroup
         android:id="@+id/rg_date_range"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp">
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dateRangeLabel">
 
-        <RadioButton
-            android:id="@+id/rb_no_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Any Date"
-            android:checked="true"
-            android:contentDescription="No date filter"
-            android:paddingVertical="8dp"/>
-
+        <!-- This Week Radio Button - ID MATCHES KOTLIN CODE -->
         <RadioButton
             android:id="@+id/rb_this_week"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="This Week (Mon - Sun)"
-            android:contentDescription="Filter posts for this week"
-            android:paddingVertical="8dp"/>
+            android:minHeight="48dp"
+            android:text="This Week"
+            android:contentDescription="@string/cd_date_this_week"
+            android:nextFocusForward="@id/rb_next_week"
+            android:checked="true" />
 
+        <!-- Next Week Radio Button - ID MATCHES KOTLIN CODE -->
         <RadioButton
             android:id="@+id/rb_next_week"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Next Week (Mon - Sun)"
-            android:contentDescription="Filter posts for next week"
-            android:paddingVertical="8dp"/>
+            android:minHeight="48dp"
+            android:text="Next Week"
+            android:contentDescription="@string/cd_date_next_week"
+            android:nextFocusForward="@id/rb_no_date" />
+
+        <!-- Custom/No Date Radio Button - ID MATCHES KOTLIN CODE -->
+        <RadioButton
+            android:id="@+id/rb_no_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="Custom Range"
+            android:contentDescription="@string/cd_date_custom"
+            android:nextFocusForward="@id/btn_clear_filters" />
     </RadioGroup>
 
     <!-- Action Buttons -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rg_date_range">
 
-        <!-- Clear Button -->
-        <Button
+        <!-- Clear All Button - ID MATCHES KOTLIN CODE -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_clear_filters"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Clear All"
             android:layout_marginEnd="8dp"
-            android:contentDescription="Clear all filters"/>
+            android:minHeight="48dp"
+            android:text="Clear All"
+            android:contentDescription="@string/cd_filter_clear"
+            android:nextFocusForward="@id/btn_apply_filters"
+            style="@style/Widget.Material3.Button.OutlinedButton" />
 
-        <!-- Apply Button -->
-        <Button
+        <!-- Apply Button - ID MATCHES KOTLIN CODE -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_apply_filters"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Apply Filters"
             android:layout_marginStart="8dp"
-            android:contentDescription="Apply selected filters"
-            style="@style/Widget.MaterialComponents.Button"/>
+            android:minHeight="48dp"
+            android:text="Apply Filters"
+            android:contentDescription="@string/cd_filter_apply"
+            style="@style/Widget.Material3.Button" />
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

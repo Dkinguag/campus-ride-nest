@@ -1,18 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Required App String -->
     <string name="app_name">Campus Ride Nest</string>
 
-    <!-- Posts Screen -->
-    <string name="browse">Browse</string>
-    <string name="mine">Mine</string>
+    <!-- Accessibility Strings for Week 11 -->
+    <string name="cd_back_button">Navigate back</string>
+    <string name="cd_badge_offer">Ride offer</string>
+    <string name="cd_badge_request">Ride request</string>
+    <string name="cd_badge_closed">Post closed</string>
+    <string name="cd_route_icon">Route information</string>
+    <string name="cd_calendar_icon">Date and time</string>
+    <string name="cd_seats_icon">Number of seats</string>
+    <string name="cd_price_icon">Price per seat</string>
+    <string name="cd_post_avatar">Profile picture</string>
+    <string name="cd_owner_name">Posted by %1$s, tap to view profile</string>
+    <string name="cd_verification_badge_verified">Email verified</string>
+    <string name="cd_edit_button">Edit this post</string>
+    <string name="cd_close_post_button">Close this post</string>
+    <string name="cd_reopen_post_button">Reopen this post</string>
+    <string name="cd_filter_button">Filter posts by location and date</string>
+    <string name="cd_create_fab">Create new ride post</string>
+    <string name="cd_no_posts">No posts icon</string>
+    <string name="cd_filter_close">Close filter menu</string>
+    <string name="cd_origin_input">Enter origin location</string>
+    <string name="cd_destination_input">Enter destination location</string>
+    <string name="cd_date_this_week">Filter by this week</string>
+    <string name="cd_date_next_week">Filter by next week</string>
+    <string name="cd_date_custom">Choose custom date range</string>
+    <string name="cd_filter_clear">Clear all filters</string>
+    <string name="cd_filter_apply">Apply filters</string>
 
-    <!-- Error State -->
-    <string name="unable_to_load">Unable to load posts</string>
-    <string name="check_connection">Check your internet connection and try again.</string>
-    <string name="retry">Retry</string>
-    <string name="error_icon">Error icon</string>
-
-    <!-- Empty State -->
-    <string name="no_posts_yet">No posts yet</string>
-    <string name="no_posts_description">No ride offers or requests have been posted.</string>
-    <string name="no_posts_icon">No posts icon</string>
+    <!-- Announcements -->
+    <string name="announce_post_closed">Post closed. No longer visible to other users. You can reopen it anytime.</string>
+    <string name="announce_post_reopened">Post reopened. Now visible to other users.</string>
+    <string name="announce_filters_applied">%1$d filters applied. %2$d posts found.</string>
+    <string name="announce_filters_cleared">All filters cleared. Showing all posts.</string>
+    <string name="announce_post_updated">Post updated successfully</string>
+    <string name="announce_no_results">No posts found matching your filters. Try adjusting your search.</string>
 </resources>

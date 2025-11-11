@@ -1,163 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="12dp"
-    tools:context=".ui.posts.PostsFragment">
+    android:layout_height="match_parent">
 
+    <!-- Toolbar with Filter Button -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Filter Button - ACCESSIBILITY FIXED to 48dp -->
         <ImageButton
-            android:id="@+id/btn_filter"
+            android:id="@+id/filterButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@android:drawable/ic_menu_search"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Filter posts"
-            android:layout_gravity="end"/>
+            android:src="@android:drawable/ic_menu_search"
+            android:contentDescription="@string/cd_filter_button"
+            android:nextFocusForward="@id/recyclerView" />
+        <!-- BEFORE: 24dp x 24dp -->
+        <!-- AFTER: 48dp x 48dp (meets minimum touch target) -->
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <!-- Add this chip below the toolbar -->
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chip_filter_active"
+    <!-- Filter Badge (shows active filter count) -->
+    <TextView
+        android:id="@+id/filterBadge"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="12dp"
+        android:background="@android:color/holo_red_dark"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        android:visibility="gone"
+        android:importantForAccessibility="no"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Filter Chips Container -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/filterChipsGroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:singleLine="false" />
+
+    <!-- RecyclerView for Posts -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:padding="8dp"
+        android:nextFocusForward="@id/createFab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filterChipsGroup" />
+
+    <!-- Empty State -->
+    <LinearLayout
+        android:id="@+id/emptyState"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
         android:visibility="gone"
-        app:closeIconVisible="true"
-        android:layout_margin="8dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <!-- Toggle Buttons: Browse vs Mine -->
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/toggle"
-        android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@android:drawable/ic_menu_info_details"
+            android:contentDescription="@string/cd_no_posts" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No posts available"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
+    <!-- FAB Create Button - ACCESSIBILITY COMPLIANT (56dp) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/createFab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:singleSelection="true"
-        app:checkedButton="@id/btnBrowse">
+        android:layout_margin="16dp"
+        android:contentDescription="@string/cd_create_fab"
+        android:src="@android:drawable/ic_input_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- FAB already 56dp x 56dp - compliant -->
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBrowse"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/browse"
-            style="?attr/materialButtonOutlinedStyle" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnMine"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/mine"
-            style="?attr/materialButtonOutlinedStyle" />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
-
-    <!-- SwipeRefresh with RecyclerView -->
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:listitem="@layout/item_post" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <!-- Empty State (initially hidden) -->
-    <LinearLayout
-        android:id="@+id/emptyLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <ImageView
-            android:id="@+id/emptyIcon"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:src="@drawable/ic_empty"
-            android:contentDescription="@string/no_posts_icon"
-            app:tint="?attr/colorOnSurfaceVariant" />
-
-        <TextView
-            android:id="@+id/emptyTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/no_posts_yet"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
-
-        <TextView
-            android:id="@+id/empty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/no_posts_description"
-            android:textSize="14sp"
-            android:textAlignment="center"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-    </LinearLayout>
-
-    <!-- Error Layout (initially hidden) -->
-    <LinearLayout
-        android:id="@+id/errorLayout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp"
-        android:visibility="gone">
-
-        <ImageView
-            android:id="@+id/errorIcon"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_error"
-            android:contentDescription="@string/error_icon"
-            app:tint="?attr/colorError" />
-
-        <TextView
-            android:id="@+id/errorTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/unable_to_load"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface" />
-
-        <TextView
-            android:id="@+id/errorMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/check_connection"
-            android:textSize="14sp"
-            android:textAlignment="center"
-            android:textColor="?attr/colorOnSurfaceVariant" />
-
-        <Button
-            android:id="@+id/retryButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/retry" />
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

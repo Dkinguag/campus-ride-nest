@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
-import android.widget.TextView
+import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,103 +15,174 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.booknest.campusridenest.R
 import com.booknest.campusridenest.ui.posts.PostsViewModel.UiState
-import com.google.android.material.button.MaterialButtonToggleGroup
-import com.google.android.material.chip.Chip
-import kotlinx.coroutines.Job
+import com.google.android.material.chip.ChipGroup
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PostsFragment : Fragment(R.layout.fragment_posts) {
 
-    // Use viewModels() delegate - automatically provides SavedStateHandle
     private val vm: PostsViewModel by viewModels()
 
-    private lateinit var list: RecyclerView
-    private lateinit var empty: TextView
-    private lateinit var toggle: MaterialButtonToggleGroup
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var emptyState: LinearLayout
+    private lateinit var filterButton: ImageButton
+    private lateinit var filterChipsGroup: ChipGroup
     private lateinit var adapter: PostsAdapter
-
-    private var observeJob: Job? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Views
-        list = view.findViewById(R.id.list)
-        empty = view.findViewById(R.id.empty)
-        toggle = view.findViewById(R.id.toggle)
+        // Initialize views matching fragment_posts.xml
+        recyclerView = view.findViewById(R.id.recyclerView)
+        emptyState = view.findViewById(R.id.emptyState)
+        filterButton = view.findViewById(R.id.filterButton)
+        filterChipsGroup = view.findViewById(R.id.filterChipsGroup)
 
         // Setup RecyclerView
+        // FIXED: Positional parameters in correct order (onClick, onEdit, onDelete)
         adapter = PostsAdapter(
-            onEdit = { /* TODO edit */ },
-            onDelete = { /* TODO delete */ },
-            onClick = { post -> openPostDetail(post) }
+            { post -> openPostDetail(post) },  // onClick - first parameter
+            { /* TODO: edit */ },              // onEdit - second parameter
+            { /* TODO: delete */ }             // onDelete - third parameter
         )
-        list.layoutManager = LinearLayoutManager(requireContext())
-        list.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
 
-        val swipeRefresh = view.findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.swipeRefresh)
-        swipeRefresh?.setOnRefreshListener {
-            vm.retryLoad()
+        // Setup FAB if needed
+        val createFab = view.findViewById<FloatingActionButton>(R.id.createFab)
+        createFab?.setOnClickListener {
+            // TODO: Navigate to create post screen
         }
 
-        // Default tab = Browse
-        startObservingBrowse()
+        // Setup filter button
+        setupFilterUI()
 
-        // Switch between Browse and My Posts
-        toggle.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-            when (checkedId) {
-                R.id.btnBrowse -> {
-                    vm.setCurrentTab(PostsViewModel.Tab.BROWSE)
-                    startObservingBrowse()
-                }
-                R.id.btnMine -> {
-                    vm.setCurrentTab(PostsViewModel.Tab.MINE)
-                    startObservingMine()
-                }
-            }
-        }
-
-        // Setup filter UI
-        setupFilterUI(view)
+        // Start observing posts
+        startObserving()
     }
 
-    // Setup filter button and chip
-    private fun setupFilterUI(view: View) {
-        val btnFilter = view.findViewById<ImageButton>(R.id.btn_filter)
-        val chipFilterActive = view.findViewById<Chip>(R.id.chip_filter_active)
-
+    private fun setupFilterUI() {
         // Filter button click - open bottom sheet
-        btnFilter?.setOnClickListener {
+        filterButton.setOnClickListener {
             val filterSheet = FilterBottomSheetFragment()
             filterSheet.show(childFragmentManager, FilterBottomSheetFragment.TAG)
         }
 
         // Observe filter state using StateFlow
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 vm.filterState.collectLatest { filterState ->
-                    chipFilterActive?.let { updateFilterChip(it, filterState) }
+                    updateFilterUI(filterState)
                 }
             }
         }
     }
 
-    // Update filter chip based on FilterState
-    private fun updateFilterChip(chip: Chip, filterState: FilterState) {
+    private fun updateFilterUI(filterState: FilterState) {
+        // Update filter chips
+        filterChipsGroup.removeAllViews()
+
         if (filterState.isActive) {
-            chip.visibility = View.VISIBLE
-            chip.text = "${filterState.activeCount} filter${if (filterState.activeCount > 1) "s" else ""}"
-            chip.setOnCloseIconClickListener {
-                vm.clearFilters()
+            filterChipsGroup.visibility = View.VISIBLE
+
+            // Add chips for each active filter
+            filterState.origin?.let { origin ->
+                addFilterChip(origin) {
+                    // Clear origin filter
+                    vm.clearFilters() // Or specific clear method if available
+                }
+            }
+
+            filterState.destination?.let { destination ->
+                addFilterChip(destination) {
+                    // Clear destination filter
+                    vm.clearFilters()
+                }
+            }
+
+            filterState.dateRange?.let { dateRange ->
+                val label = when (dateRange) {
+                    DateRange.ThisWeek -> "This Week"
+                    DateRange.NextWeek -> "Next Week"
+                    is DateRange.Custom -> "Custom Range"
+                    else -> "Date Filter"
+                }
+                addFilterChip(label) {
+                    // Clear date filter
+                    vm.clearFilters()
+                }
             }
         } else {
-            chip.visibility = View.GONE
+            filterChipsGroup.visibility = View.GONE
         }
     }
 
-    // Open detail screen
+    private fun addFilterChip(text: String, onClose: () -> Unit) {
+        val chip = com.google.android.material.chip.Chip(requireContext())
+        chip.text = text
+        chip.isCloseIconVisible = true
+        chip.setOnCloseIconClickListener {
+            onClose()
+        }
+        chip.contentDescription = "Remove $text filter"
+        filterChipsGroup.addView(chip)
+    }
+
+    private fun startObserving() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.loadBrowse()
+                vm.browse.collectLatest { state ->
+                    render(state)
+                }
+            }
+        }
+    }
+
+    private fun render(state: UiState<List<PostUi>>) {
+        when (state) {
+            is UiState.Loading -> {
+                adapter.submitList(emptyList())
+                emptyState.isVisible = false
+                recyclerView.isVisible = true
+            }
+            is UiState.Empty -> {
+                adapter.submitList(emptyList())
+                emptyState.isVisible = true
+                recyclerView.isVisible = false
+
+                // ACCESSIBILITY: Announce no results if filters are active
+                val filterState = vm.filterState.value
+                if (filterState.isActive) {
+                    announceNoResults()
+                }
+            }
+            is UiState.Error -> {
+                adapter.submitList(emptyList())
+                emptyState.isVisible = true
+                recyclerView.isVisible = false
+                // TODO: Show error message in empty state
+            }
+            is UiState.Success -> {
+                if (state.data.isEmpty()) {
+                    emptyState.isVisible = true
+                    recyclerView.isVisible = false
+
+                    // ACCESSIBILITY: Announce no results if filters are active
+                    val filterState = vm.filterState.value
+                    if (filterState.isActive) {
+                        announceNoResults()
+                    }
+                } else {
+                    emptyState.isVisible = false
+                    recyclerView.isVisible = true
+                }
+                adapter.submitList(state.data)
+            }
+        }
+    }
+
     private fun openPostDetail(post: PostUi) {
         val intent = Intent(requireContext(), PostDetailActivity::class.java).apply {
             putExtra("postId", post.id)
@@ -119,7 +190,7 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
             putExtra("from", post.from)
             putExtra("to", post.to)
 
-            // Convert dateTime to long timestamp - handle any type
+            // Convert dateTime to long timestamp
             val dateTimeLong = try {
                 val dt = post.dateTime
                 when {
@@ -127,9 +198,8 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
                     dt is Long -> dt
                     dt is Number -> dt.toLong()
                     dt is String -> dt.toLongOrNull() ?: 0L
-                    // Handle Firestore Timestamp by checking class name
+                    // Handle Firestore Timestamp
                     dt.javaClass.simpleName == "Timestamp" -> {
-                        // Use reflection to get seconds field
                         val secondsField = dt.javaClass.getField("seconds")
                         (secondsField.get(dt) as Long) * 1000
                     }
@@ -143,11 +213,8 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
 
             putExtra("seats", post.seats ?: 0)
             putExtra("ownerUid", post.ownerUid)
-
-            // FIXED: Pass actual status from post, default to "open" if null
             putExtra("status", post.status ?: "open")
 
-            // FIXED: Pass actual price from post if it's an offer
             if (post.type.equals("offer", ignoreCase = true)) {
                 putExtra("price", post.price ?: 0)
             } else {
@@ -156,81 +223,32 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
         }
         startActivity(intent)
     }
+    // ============ ACCESSIBILITY ANNOUNCEMENTS (Commit 4) ============
 
-    // Browse = everyone's open offers/requests
-    private fun startObservingBrowse() {
-        swapCollector {
-            vm.loadBrowse()
-            vm.browse.collectLatest { render(it) }
-        }
+    /**
+     * Announce when filters are applied
+     * Example: "2 filters applied. 12 posts found."
+     */
+    private fun announceFiltersApplied(filterCount: Int, postCount: Int) {
+        val announcement = getString(R.string.announce_filters_applied, filterCount, postCount)
+        view?.announceForAccessibility(announcement)
     }
 
-    // Mine = only my posts (offers + requests)
-    private fun startObservingMine() {
-        swapCollector {
-            vm.loadMine()
-            vm.mine.collectLatest { render(it) }
-        }
+    /**
+     * Announce when filters are cleared
+     * Example: "All filters cleared. Showing all posts."
+     */
+    private fun announceFiltersCleared() {
+        val announcement = getString(R.string.announce_filters_cleared)
+        view?.announceForAccessibility(announcement)
     }
 
-    // Cancels the previous collect job and starts a new one
-    private fun swapCollector(block: suspend () -> Unit) {
-        observeJob?.cancel()
-        observeJob = viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                block()
-            }
-        }
-    }
-
-    // Render UiState<List<PostUi>> into the screen
-    private fun render(state: UiState<List<PostUi>>) {
-        // Hide SwipeRefresh loading if present
-        view?.findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.swipeRefresh)?.isRefreshing = false
-
-        when (state) {
-            is UiState.Loading -> {
-                // Show loading indicator
-                view?.findViewById<androidx.swiperefreshlayout.widget.SwipeRefreshLayout>(R.id.swipeRefresh)?.isRefreshing = true
-                adapter.submitList(emptyList())
-                empty.isVisible = false
-                hideError()
-            }
-            is UiState.Empty -> {
-                adapter.submitList(emptyList())
-                empty.isVisible = true
-                empty.text = getString(R.string.no_posts_yet)
-                hideError()
-            }
-            is UiState.Error -> {
-                adapter.submitList(emptyList())
-                empty.isVisible = false
-                showError(state.message, state.canRetry)
-            }
-            is UiState.Success -> {
-                empty.isVisible = state.data.isEmpty()
-                adapter.submitList(state.data)
-                hideError()
-            }
-        }
-    }
-
-    private fun showError(message: String, canRetry: Boolean) {
-        val errorLayout = view?.findViewById<View>(R.id.errorLayout)
-        val errorMessage = view?.findViewById<TextView>(R.id.errorMessage)
-        val retryButton = view?.findViewById<View>(R.id.retryButton)
-
-        errorLayout?.isVisible = true
-        errorMessage?.text = message
-        retryButton?.isVisible = canRetry
-
-        retryButton?.setOnClickListener {
-            vm.retryLoad()
-        }
-    }
-
-    private fun hideError() {
-        val errorLayout = view?.findViewById<View>(R.id.errorLayout)
-        errorLayout?.isVisible = false
+    /**
+     * Announce when no results match filters
+     * Need to add this string to strings.xml first
+     */
+    private fun announceNoResults() {
+        val announcement = "No posts found matching your filters. Try adjusting your search."
+        view?.announceForAccessibility(announcement)
     }
 }

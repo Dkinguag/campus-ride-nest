@@ -1,13 +1,11 @@
 package com.booknest.campusridenest.ui.posts;
 
-import static android.app.ProgressDialog.show;
-import static android.text.format.DateUtils.formatDateTime;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.booknest.campusridenest.R;
 import com.booknest.campusridenest.data.repo.ProfileRepository;
 import com.booknest.campusridenest.ui.profile.ProfileActivity;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AlertDialog;
@@ -27,13 +26,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import com.google.firebase.Timestamp;
 
 public class PostDetailActivity extends AppCompatActivity {
 
-    private Button btnEdit, btnClosePost, btnReopenPost;
-    private TextView tvOwnerName;  // NEW
-    private View ownerNameLayout;  // NEW
+    // FIXED: Updated button variables to match XML IDs
+    private MaterialButton btnEdit, btnClosePost, btnReopenPost;
+    private TextView tvOwnerName;
+    private LinearLayout ownerLayout;
     private static final int REQUEST_EDIT_POST = 100;
 
     // Post data variables
@@ -73,61 +72,68 @@ public class PostDetailActivity extends AppCompatActivity {
                 : null;
         isOwnPost = currentUserId != null && currentUserId.equals(ownerUid);
 
-        // Views
-        TextView tvType = findViewById(R.id.tvType);
-        TextView tvRoute = findViewById(R.id.tvRoute);
-        TextView tvDateTime = findViewById(R.id.tvDateTime);
-        TextView tvSeats = findViewById(R.id.tvSeats);
-        Button btnAction = findViewById(R.id.btnAction);
-        btnEdit = findViewById(R.id.btn_edit_post);
-        btnClosePost = findViewById(R.id.btn_close_post);
-        btnReopenPost = findViewById(R.id.btn_reopen_post);
+        // FIXED: Views with correct IDs from XML
+        TextView statusBadge = findViewById(R.id.statusBadge);
+        TextView routeText = findViewById(R.id.routeText);
+        TextView dateTimeText = findViewById(R.id.dateTimeText);
+        TextView seatsText = findViewById(R.id.seatsText);
+        LinearLayout priceLayout = findViewById(R.id.priceLayout);
+        TextView priceText = findViewById(R.id.priceText);
 
-        // NEW: Owner name views
-        tvOwnerName = findViewById(R.id.tvOwnerName);
-        ownerNameLayout = findViewById(R.id.ownerNameLayout);
+        btnEdit = findViewById(R.id.editButton);
+        btnClosePost = findViewById(R.id.closeButton);
+        btnReopenPost = findViewById(R.id.reopenButton);
+
+        // Owner info views
+        tvOwnerName = findViewById(R.id.ownerName);
+        ownerLayout = findViewById(R.id.ownerLayout);
+        TextView ownerEmail = findViewById(R.id.ownerEmail);
+        ImageView verificationBadge = findViewById(R.id.verificationBadge);
 
         // Show/hide buttons based on ownership and status
         setupOwnerButtons();
 
         // Display data with null/empty checks
-        tvType.setText(type != null ? type.toUpperCase() : "POST");
+        statusBadge.setText(type != null ? type.toUpperCase() : "POST");
+
+        // Set badge color based on type
+        if ("offer".equalsIgnoreCase(type)) {
+            statusBadge.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_dark));
+        } else {
+            statusBadge.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
+        }
 
         String fromText = (from != null && !from.isEmpty()) ? from : "Unknown Origin";
         String toText = (to != null && !to.isEmpty()) ? to : "Unknown Destination";
-        tvRoute.setText(fromText + " → " + toText);
+        routeText.setText(fromText + " → " + toText);
 
-        tvDateTime.setText(dateTime > 0 ? formatDateTime(dateTime) : "No date specified");
-        tvSeats.setText("Seats: " + seats);
+        dateTimeText.setText(dateTime > 0 ? formatDateTime(dateTime) : "No date specified");
+        seatsText.setText(seats + " seats");
 
-        // NEW: Load owner name
-        loadOwnerName();
-
-        // Action button
-        if (isOwnPost) {
-            btnAction.setText("This is your post");
-            btnAction.setEnabled(false);
+        // Show price layout only for offers
+        if ("offer".equalsIgnoreCase(type) && price > 0) {
+            priceLayout.setVisibility(View.VISIBLE);
+            priceText.setText("$" + price + " per seat");
         } else {
-            if ("offer".equalsIgnoreCase(type)) {
-                btnAction.setText("Request This Ride");
-            } else {
-                btnAction.setText("Offer a Ride");
-            }
-
-            btnAction.setOnClickListener(v -> {
-                // TODO: Implement accept/respond functionality
-                Toast.makeText(this, "Feature coming soon!", Toast.LENGTH_SHORT).show();
-            });
+            priceLayout.setVisibility(View.GONE);
         }
 
-        // Back button
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        // Load owner information
+        loadOwnerInfo(ownerEmail, verificationBadge);
+
+        // Make owner layout clickable
+        ownerLayout.setOnClickListener(v -> openOwnerProfile());
+
+        // Back button - FIXED: correct ID
+        findViewById(R.id.backButton).setOnClickListener(v -> finish());
     }
 
-    // NEW: Load and display owner name
-    private void loadOwnerName() {
+    // Load owner name, email, and verification status
+    private void loadOwnerInfo(TextView ownerEmail, ImageView verificationBadge) {
         if (ownerUid == null || ownerUid.isEmpty()) {
             tvOwnerName.setText("Unknown User");
+            ownerEmail.setText("");
+            verificationBadge.setVisibility(View.GONE);
             return;
         }
 
@@ -135,22 +141,42 @@ public class PostDetailActivity extends AppCompatActivity {
                 .getProfile(ownerUid)
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
+                        // Display name
                         String displayName = documentSnapshot.getString("displayName");
                         tvOwnerName.setText(displayName != null ? displayName : "User");
+
+                        // ACCESSIBILITY: Set dynamic content description for owner layout
+                        ownerLayout.setContentDescription(
+                                getString(R.string.cd_owner_name, displayName != null ? displayName : "User")
+                        );
+
+                        // Email
+                        String email = documentSnapshot.getString("email");
+                        ownerEmail.setText(email != null ? email : "");
+
+                        // Verification badge
+                        Boolean isVerified = documentSnapshot.getBoolean("isVerified");
+                        if (isVerified != null && isVerified) {
+                            verificationBadge.setVisibility(View.VISIBLE);
+                            verificationBadge.setContentDescription(getString(R.string.cd_verification_badge_verified));
+                        } else {
+                            verificationBadge.setVisibility(View.GONE);
+                        }
                     } else {
                         tvOwnerName.setText("User");
+                        ownerEmail.setText("");
+                        verificationBadge.setVisibility(View.GONE);
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error loading owner name", e);
+                    Log.e(TAG, "Error loading owner info", e);
                     tvOwnerName.setText("User");
+                    ownerEmail.setText("");
+                    verificationBadge.setVisibility(View.GONE);
                 });
-
-        // NEW: Make owner name clickable to open profile
-        ownerNameLayout.setOnClickListener(v -> openOwnerProfile());
     }
 
-    // NEW: Open owner's profile
+    // Open owner's profile
     private void openOwnerProfile() {
         if (ownerUid == null || ownerUid.isEmpty()) {
             Toast.makeText(this, "Cannot load profile", Toast.LENGTH_SHORT).show();
@@ -168,17 +194,18 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void setupOwnerButtons() {
-        View ownerButtonsLayout = findViewById(R.id.ownerButtonsLayout);
+        // FIXED: Use correct XML ID
+        LinearLayout actionButtonsLayout = findViewById(R.id.actionButtonsLayout);
 
         if (isOwnPost) {
-            // Show the owner buttons section
+            // Show appropriate buttons based on status
             if ("open".equals(postStatus)) {
                 // Show edit and close buttons
-                ownerButtonsLayout.setVisibility(View.VISIBLE);
+                actionButtonsLayout.setVisibility(View.VISIBLE);
                 btnReopenPost.setVisibility(View.GONE);
             } else {
                 // Show reopen button
-                ownerButtonsLayout.setVisibility(View.GONE);
+                actionButtonsLayout.setVisibility(View.GONE);
                 btnReopenPost.setVisibility(View.VISIBLE);
             }
 
@@ -192,7 +219,7 @@ public class PostDetailActivity extends AppCompatActivity {
             btnReopenPost.setOnClickListener(v -> reopenPost());
         } else {
             // Not the owner - hide all owner buttons
-            ownerButtonsLayout.setVisibility(View.GONE);
+            actionButtonsLayout.setVisibility(View.GONE);
             btnReopenPost.setVisibility(View.GONE);
         }
     }
@@ -232,11 +259,14 @@ public class PostDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Post closed successfully", Toast.LENGTH_SHORT).show();
 
+                    // ACCESSIBILITY: Announce post closed
+                    announcePostClosed();
+
                     // Update local status and refresh UI
                     postStatus = "closed";
                     setupOwnerButtons();
 
-                    // NEW: Update profile statistics (decrement active, increment closed)
+                    // Update profile statistics
                     ProfileRepository.getInstance()
                             .closePost(ownerUid)
                             .addOnFailureListener(e -> {
@@ -260,11 +290,14 @@ public class PostDetailActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(this, "Post reopened successfully", Toast.LENGTH_SHORT).show();
 
+                    // ACCESSIBILITY: Announce post reopened
+                    announcePostReopened();
+
                     // Update local status and refresh UI
                     postStatus = "open";
                     setupOwnerButtons();
 
-                    // NEW: Update profile statistics (increment active, decrement closed)
+                    // Update profile statistics (increment active, decrement closed)
                     Map<String, Object> profileUpdates = new HashMap<>();
                     profileUpdates.put("activePosts", FieldValue.increment(1));
                     profileUpdates.put("closedPosts", FieldValue.increment(-1));
@@ -286,7 +319,7 @@ public class PostDetailActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_EDIT_POST && resultCode == RESULT_OK) {
-            // Refresh post details or finish
+            // Refresh post details
             reloadPostData();
         }
     }
@@ -330,6 +363,9 @@ public class PostDetailActivity extends AppCompatActivity {
 
                         // Refresh the UI
                         refreshUI();
+
+                        // ACCESSIBILITY: Announce post updated (if this was called after edit)
+                        announcePostUpdated();
                     } else {
                         Toast.makeText(this, "Post no longer exists", Toast.LENGTH_SHORT).show();
                         finish();
@@ -342,22 +378,59 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void refreshUI() {
-        // Update TextViews
-        TextView tvType = findViewById(R.id.tvType);
-        TextView tvRoute = findViewById(R.id.tvRoute);
-        TextView tvDateTime = findViewById(R.id.tvDateTime);
-        TextView tvSeats = findViewById(R.id.tvSeats);
+        // FIXED: Update TextViews using correct IDs
+        TextView statusBadge = findViewById(R.id.statusBadge);
+        TextView routeText = findViewById(R.id.routeText);
+        TextView dateTimeText = findViewById(R.id.dateTimeText);
+        TextView seatsText = findViewById(R.id.seatsText);
+        LinearLayout priceLayout = findViewById(R.id.priceLayout);
+        TextView priceText = findViewById(R.id.priceText);
 
-        tvType.setText(type != null ? type.toUpperCase() : "POST");
+        statusBadge.setText(type != null ? type.toUpperCase() : "POST");
 
         String fromText = (from != null && !from.isEmpty()) ? from : "Unknown Origin";
         String toText = (to != null && !to.isEmpty()) ? to : "Unknown Destination";
-        tvRoute.setText(fromText + " → " + toText);
+        routeText.setText(fromText + " → " + toText);
 
-        tvDateTime.setText(dateTime > 0 ? formatDateTime(dateTime) : "No date specified");
-        tvSeats.setText("Seats: " + seats);
+        dateTimeText.setText(dateTime > 0 ? formatDateTime(dateTime) : "No date specified");
+        seatsText.setText(seats + " seats");
+
+        // Update price visibility
+        if ("offer".equalsIgnoreCase(type) && price > 0) {
+            priceLayout.setVisibility(View.VISIBLE);
+            priceText.setText("$" + price + " per seat");
+        } else {
+            priceLayout.setVisibility(View.GONE);
+        }
 
         // Update button visibility
         setupOwnerButtons();
+    }
+    // ============ ACCESSIBILITY ANNOUNCEMENTS (Commit 4) ============
+
+    /**
+     * Announce when post is closed
+     * Waits briefly to ensure announcement completes
+     */
+    private void announcePostClosed() {
+        String announcement = getString(R.string.announce_post_closed);
+        findViewById(android.R.id.content).announceForAccessibility(announcement);
+    }
+
+    /**
+     * Announce when post is reopened
+     */
+    private void announcePostReopened() {
+        String announcement = getString(R.string.announce_post_reopened);
+        findViewById(android.R.id.content).announceForAccessibility(announcement);
+    }
+
+    /**
+     * Announce when post is updated after editing
+     * Need to add this string to strings.xml
+     */
+    private void announcePostUpdated() {
+        String announcement = "Post updated successfully";
+        findViewById(android.R.id.content).announceForAccessibility(announcement);
     }
 }
