@@ -31,7 +31,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Origin Input - ID MATCHES KOTLIN CODE -->
+    <!-- Origin Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/originInputLayout"
         android:layout_width="0dp"
@@ -53,7 +53,7 @@
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Destination Input - ID MATCHES KOTLIN CODE -->
+    <!-- Destination Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/destinationInputLayout"
         android:layout_width="0dp"
@@ -88,7 +88,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/destinationInputLayout" />
 
-    <!-- RadioGroup - ID MATCHES KOTLIN CODE -->
+    <!-- RadioGroup -->
     <RadioGroup
         android:id="@+id/rg_date_range"
         android:layout_width="0dp"
@@ -98,7 +98,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dateRangeLabel">
 
-        <!-- This Week Radio Button - ID MATCHES KOTLIN CODE -->
+        <!-- This Week Radio Button -->
         <RadioButton
             android:id="@+id/rb_this_week"
             android:layout_width="match_parent"
@@ -109,7 +109,7 @@
             android:nextFocusForward="@id/rb_next_week"
             android:checked="true" />
 
-        <!-- Next Week Radio Button - ID MATCHES KOTLIN CODE -->
+        <!-- Next Week Radio Button -->
         <RadioButton
             android:id="@+id/rb_next_week"
             android:layout_width="match_parent"
@@ -119,7 +119,7 @@
             android:contentDescription="@string/cd_date_next_week"
             android:nextFocusForward="@id/rb_no_date" />
 
-        <!-- Custom/No Date Radio Button - ID MATCHES KOTLIN CODE -->
+        <!-- Custom/No Date Radio Button -->
         <RadioButton
             android:id="@+id/rb_no_date"
             android:layout_width="match_parent"
@@ -141,7 +141,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rg_date_range">
 
-        <!-- Clear All Button - ID MATCHES KOTLIN CODE -->
+        <!-- Clear All Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_clear_filters"
             android:layout_width="0dp"
@@ -154,7 +154,7 @@
             android:nextFocusForward="@id/btn_apply_filters"
             style="@style/Widget.Material3.Button.OutlinedButton" />
 
-        <!-- Apply Button - ID MATCHES KOTLIN CODE -->
+        <!-- Apply Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_apply_filters"
             android:layout_width="0dp"

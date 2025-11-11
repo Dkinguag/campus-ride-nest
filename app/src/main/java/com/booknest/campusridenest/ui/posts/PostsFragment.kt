@@ -227,7 +227,6 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
 
     /**
      * Announce when filters are applied
-     * Example: "2 filters applied. 12 posts found."
      */
     private fun announceFiltersApplied(filterCount: Int, postCount: Int) {
         val announcement = getString(R.string.announce_filters_applied, filterCount, postCount)
@@ -236,7 +235,6 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
 
     /**
      * Announce when filters are cleared
-     * Example: "All filters cleared. Showing all posts."
      */
     private fun announceFiltersCleared() {
         val announcement = getString(R.string.announce_filters_cleared)
@@ -245,7 +243,6 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
 
     /**
      * Announce when no results match filters
-     * Need to add this string to strings.xml first
      */
     private fun announceNoResults() {
         val announcement = "No posts found matching your filters. Try adjusting your search."
