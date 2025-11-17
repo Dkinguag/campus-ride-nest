@@ -1,193 +1,248 @@
 package com.booknest.campusridenest.ui;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.booknest.campusridenest.R;
-import com.booknest.campusridenest.data.repo.RequestRepository;
-import com.booknest.campusridenest.ui.posts.PostsActivity;
+import com.booknest.campusridenest.util.GeocodingService;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RequestCreateActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth;
-    private Button dateButton;
-    private Button timeButton;
+    private EditText etFrom, etTo, etSeats, etMaxBudget;
+    private Button btnPickDate, btnPickTime, btnSubmit;
+    private ProgressBar progressBar;
 
-    // Store selected date and time
-    private int selectedYear = -1;
-    private int selectedMonth = -1;
-    private int selectedDay = -1;
-    private int selectedHour = -1;
-    private int selectedMinute = -1;
+    // NEW: Preference UI elements
+    private CheckBox cbNeedNonSmoking, cbNeedNoPets;
+    private RadioGroup rgMusic, rgConversation;
+
+    private FirebaseFirestore db;
+    private GeocodingService geocodingService;
+
+    private Calendar selectedDateTime;
 
     @Override
-    protected void onCreate(Bundle b) {
-        super.onCreate(b);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_create);
 
-        EditText etOrigin = findViewById(R.id.etOriginR);
-        EditText etDest   = findViewById(R.id.etDestinationR);
-        EditText etSeats  = findViewById(R.id.etSeatsR);
-        Button btn        = findViewById(R.id.btnCreateRequest);
+        db = FirebaseFirestore.getInstance();
+        geocodingService = new GeocodingService(this);
+        selectedDateTime = Calendar.getInstance();
 
-        // Initialize date and time buttons
-        dateButton = findViewById(R.id.dateButton);
-        timeButton = findViewById(R.id.timeButton);
+        // Initialize views
+        etFrom = findViewById(R.id.etFrom);
+        etTo = findViewById(R.id.etTo);
+        etSeats = findViewById(R.id.etSeats);
+        etMaxBudget = findViewById(R.id.etMaxBudget);
+        btnPickDate = findViewById(R.id.btnPickDate);
+        btnPickTime = findViewById(R.id.btnPickTime);
+        btnSubmit = findViewById(R.id.btnSubmit);
+        progressBar = findViewById(R.id.progressBar);
 
-        RequestRepository repo = new RequestRepository();
-        auth = FirebaseAuth.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
+        // NEW: Initialize preference views
+        cbNeedNonSmoking = findViewById(R.id.cbNeedNonSmoking);
+        cbNeedNoPets = findViewById(R.id.cbNeedNoPets);
+        rgMusic = findViewById(R.id.rgMusic);
+        rgConversation = findViewById(R.id.rgConversation);
 
-        if (user == null) {
-            btn.setEnabled(false);
-            Toast.makeText(this, "Sign in first.", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        // Same email verification gate as offers
-        user.reload().addOnCompleteListener(task -> {
-            FirebaseUser u = auth.getCurrentUser();
-            boolean ok = u != null && u.isEmailVerified();
-            btn.setEnabled(ok);
-            if (!ok) {
-                Toast.makeText(this, "Verify your email to create requests.", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        // Date button click listener
-        dateButton.setOnClickListener(v -> showDatePicker());
-
-        // Time button click listener
-        timeButton.setOnClickListener(v -> showTimePicker());
-
-        btn.setOnClickListener(v -> {
-            String origin   = String.valueOf(etOrigin.getText()).trim();
-            String dest     = String.valueOf(etDest.getText()).trim();
-            String seatsStr = String.valueOf(etSeats.getText()).trim();
-
-            if (TextUtils.isEmpty(origin)) { etOrigin.setError("Required"); return; }
-            if (TextUtils.isEmpty(dest))   { etDest.setError("Required");   return; }
-
-            int seats = 1;
-            try {
-                if (!TextUtils.isEmpty(seatsStr)) seats = Math.max(1, Integer.parseInt(seatsStr));
-            } catch (NumberFormatException nfe) {
-                etSeats.setError("Number"); return;
-            }
-
-            FirebaseUser u = auth.getCurrentUser();
-            if (u == null) { Toast.makeText(this, "Not signed in.", Toast.LENGTH_LONG).show(); return; }
-
-            // Check if date and time are selected
-            if (selectedYear == -1 || selectedHour == -1) {
-                Toast.makeText(this, "Please select date and time", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Create timestamp from selected date and time
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute, 0);
-            long when = calendar.getTimeInMillis();
-
-            btn.setEnabled(false);
-
-            repo.createRequestAsync(u.getUid(), origin, dest, when, seats, "open")
-                    .addOnSuccessListener(id -> {
-                        Toast.makeText(this, "Request created!", Toast.LENGTH_SHORT).show();
-
-                        // NEW: Increment active post count in profile
-                        com.booknest.campusridenest.data.repo.ProfileRepository.getInstance()
-                                .incrementActivePosts(u.getUid())
-                                .addOnFailureListener(e -> {
-                                    android.util.Log.e("RequestCreateActivity", "Failed to update profile stats", e);
-                                });
-
-                        etOrigin.setText("");
-                        etDest.setText("");
-                        etSeats.setText("");
-                        btn.setEnabled(true);
-
-                        // Reset date and time selections
-                        selectedYear = -1;
-                        selectedMonth = -1;
-                        selectedDay = -1;
-                        selectedHour = -1;
-                        selectedMinute = -1;
-                        dateButton.setText("Select Date");
-                        timeButton.setText("Select Time");
-
-                        Intent i = new Intent(this, PostsActivity.class);
-                        i.putExtra("tab", "mine");
-                        startActivity(i);
-                        finish();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                        btn.setEnabled(true);
-                    });
-        });
+        btnPickDate.setOnClickListener(v -> showDatePicker());
+        btnPickTime.setOnClickListener(v -> showTimePicker());
+        btnSubmit.setOnClickListener(v -> handleSubmit());
     }
 
     private void showDatePicker() {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
+        new android.app.DatePickerDialog(
                 this,
-                (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Save selected date
-                    this.selectedYear = selectedYear;
-                    this.selectedMonth = selectedMonth;
-                    this.selectedDay = selectedDay;
-
-                    // Update button text
-                    String dateText = (selectedMonth + 1) + "/" + selectedDay + "/" + selectedYear;
-                    dateButton.setText(dateText);
+                (view, year, month, day) -> {
+                    selectedDateTime.set(Calendar.YEAR, year);
+                    selectedDateTime.set(Calendar.MONTH, month);
+                    selectedDateTime.set(Calendar.DAY_OF_MONTH, day);
+                    updateDateTimeDisplay();
                 },
-                year, month, day
-        );
-
-        // Don't allow selecting past dates
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
-        datePickerDialog.show();
+                selectedDateTime.get(Calendar.YEAR),
+                selectedDateTime.get(Calendar.MONTH),
+                selectedDateTime.get(Calendar.DAY_OF_MONTH)
+        ).show();
     }
 
     private void showTimePicker() {
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(
+        new android.app.TimePickerDialog(
                 this,
-                (view, selectedHour, selectedMinute) -> {
-                    // Save selected time
-                    this.selectedHour = selectedHour;
-                    this.selectedMinute = selectedMinute;
-
-                    // Update button text
-                    String amPm = selectedHour >= 12 ? "PM" : "AM";
-                    int displayHour = selectedHour % 12;
-                    if (displayHour == 0) displayHour = 12;
-                    String timeText = String.format("%d:%02d %s", displayHour, selectedMinute, amPm);
-                    timeButton.setText(timeText);
+                (view, hour, minute) -> {
+                    selectedDateTime.set(Calendar.HOUR_OF_DAY, hour);
+                    selectedDateTime.set(Calendar.MINUTE, minute);
+                    updateDateTimeDisplay();
                 },
-                hour, minute, false // false = 12-hour format
-        );
+                selectedDateTime.get(Calendar.HOUR_OF_DAY),
+                selectedDateTime.get(Calendar.MINUTE),
+                false
+        ).show();
+    }
 
-        timePickerDialog.show();
+    private void updateDateTimeDisplay() {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMM dd, yyyy h:mm a", java.util.Locale.getDefault());
+        String dateTimeStr = sdf.format(selectedDateTime.getTime());
+        btnPickDate.setText(dateTimeStr);
+    }
+
+    private void handleSubmit() {
+        String from = etFrom.getText().toString().trim();
+        String to = etTo.getText().toString().trim();
+        String seatsStr = etSeats.getText().toString().trim();
+        String budgetStr = etMaxBudget.getText().toString().trim();
+
+        // Validation
+        if (from.isEmpty() || to.isEmpty() || seatsStr.isEmpty() || budgetStr.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int seats = Integer.parseInt(seatsStr);
+        double maxBudget = Double.parseDouble(budgetStr);
+
+        // Get preference values
+        boolean needsNonSmoking = cbNeedNonSmoking.isChecked();
+        boolean needsNoPets = cbNeedNoPets.isChecked();
+
+        String musicPref = getMusicPreference();
+        String conversationPref = getConversationPreference();
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        long timeMillis = selectedDateTime.getTimeInMillis();
+
+        showLoading(true);
+
+        // Geocode addresses
+        geocodingService.getGeoPointsFromAddresses(from, to, new GeocodingService.BatchGeocodingCallback() {
+            @Override
+            public void onSuccess(GeoPoint pickupLocation, GeoPoint dropoffLocation) {
+                saveRequestToFirestore(userId, from, to, pickupLocation, dropoffLocation,
+                        timeMillis, seats, maxBudget, needsNonSmoking, needsNoPets, musicPref, conversationPref);
+            }
+
+            @Override
+            public void onError(String error) {
+                showLoading(false);
+                Toast.makeText(RequestCreateActivity.this, "Geocoding error: " + error, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private String getMusicPreference() {
+        int selectedId = rgMusic.getCheckedRadioButtonId();
+        if (selectedId == R.id.rbMusicYes) return "yes";
+        if (selectedId == R.id.rbMusicNo) return "no";
+        return "no-preference";
+    }
+
+    private String getConversationPreference() {
+        int selectedId = rgConversation.getCheckedRadioButtonId();
+        if (selectedId == R.id.rbConversationChatty) return "chatty";
+        if (selectedId == R.id.rbConversationQuiet) return "quiet";
+        return "no-preference";
+    }
+
+    private void saveRequestToFirestore(String userId, String origin, String dest,
+                                        GeoPoint pickupLocation, GeoPoint dropoffLocation,
+                                        long timeMillis, int seats, double maxBudget,
+                                        boolean needsNonSmoking, boolean needsNoPets,
+                                        String musicPref, String conversationPref) {
+
+        String requestId = db.collection("requests").document().getId();
+
+        Map<String, Object> requestData = new HashMap<>();
+        requestData.put("id", requestId);
+        requestData.put("type", "request");
+        requestData.put("ownerUid", userId);
+        requestData.put("from", origin);
+        requestData.put("to", dest);
+        requestData.put("origin", origin);
+        requestData.put("destination", dest);
+        requestData.put("timeMillis", timeMillis);
+        requestData.put("seats", seats);
+        requestData.put("dateTime", new Timestamp(new Date(timeMillis)));
+        requestData.put("status", "open");
+        requestData.put("createdAt", FieldValue.serverTimestamp());
+        requestData.put("updatedAt", FieldValue.serverTimestamp());
+
+        // NEW: Matching algorithm fields
+        requestData.put("pickupLocation", pickupLocation);
+        requestData.put("dropoffLocation", dropoffLocation);
+        requestData.put("needsNonSmoking", needsNonSmoking);
+        requestData.put("needsNoPets", needsNoPets);
+        requestData.put("musicPreference", musicPref);
+        requestData.put("conversationLevel", conversationPref);
+        requestData.put("maxBudget", maxBudget);
+
+        db.collection("requests")
+                .document(requestId)
+                .set(requestData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Request created!", Toast.LENGTH_SHORT).show();
+
+                    // Increment active post count
+                    com.booknest.campusridenest.data.repo.ProfileRepository.getInstance()
+                            .incrementActivePosts(userId)
+                            .addOnFailureListener(e -> {
+                                android.util.Log.e("RequestCreateActivity", "Failed to update profile stats", e);
+                            });
+
+                    showLoading(false);
+
+                    // Launch matching activity
+                    Intent intent = new Intent(this, MatchedRidesActivity.class);
+                    intent.putExtra("request_id", requestId);
+                    intent.putExtra("from", origin);
+                    intent.putExtra("to", dest);
+                    intent.putExtra("timeMillis", timeMillis);
+                    intent.putExtra("seats", seats);
+                    intent.putExtra("maxBudget", maxBudget);
+                    intent.putExtra("pickupLat", pickupLocation.getLatitude());
+                    intent.putExtra("pickupLon", pickupLocation.getLongitude());
+                    intent.putExtra("dropoffLat", dropoffLocation.getLatitude());
+                    intent.putExtra("dropoffLon", dropoffLocation.getLongitude());
+                    intent.putExtra("needsNonSmoking", needsNonSmoking);
+                    intent.putExtra("needsNoPets", needsNoPets);
+                    intent.putExtra("musicPreference", musicPref);
+                    intent.putExtra("conversationLevel", conversationPref);
+                    intent.putExtra("ownerUid", userId);
+
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    showLoading(false);
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void showLoading(boolean show) {
+        progressBar.setVisibility(show ? android.view.View.VISIBLE : android.view.View.GONE);
+        btnSubmit.setEnabled(!show);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        geocodingService.shutdown();
     }
 }
