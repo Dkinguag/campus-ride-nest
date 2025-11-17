@@ -3,87 +3,219 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:padding="16dp">
+    android:background="#F5F5F5">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
-            android:id="@+id/lblOriginR"
-            android:text="Origin"
-            android:labelFor="@+id/etOriginR"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Create Ride Request"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Route Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Route"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
         <EditText
-            android:id="@+id/etOriginR"
-            android:hint="HUB"
-            android:inputType="textCapWords"
-            android:autofillHints="postalAddress"
+            android:id="@+id/etFrom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/lblDestinationR"
-            android:text="Destination"
-            android:labelFor="@+id/etDestinationR"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:hint="From (e.g., Library, HUB)"
+            android:inputType="text"
+            android:padding="12dp"
+            android:background="@android:color/white"
+            android:layout_marginBottom="12dp" />
 
         <EditText
-            android:id="@+id/etDestinationR"
-            android:hint="Main Building"
-            android:inputType="textCapWords"
-            android:autofillHints="postalAddress"
+            android:id="@+id/etTo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:hint="To (e.g., Gym, Harrisburg)"
+            android:inputType="text"
+            android:padding="12dp"
+            android:background="@android:color/white"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Date & Time Section -->
         <TextView
-            android:id="@+id/lblSeatsR"
-            android:text="Seats"
-            android:labelFor="@+id/etSeatsR"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="When"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnPickDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pick Date and Time"
+            android:textAllCaps="false"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btnPickTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pick Time"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Ride Details Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ride Details"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
 
         <EditText
-            android:id="@+id/etSeatsR"
-            android:hint="1"
+            android:id="@+id/etSeats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Number of seats needed"
             android:inputType="number"
-            android:imeOptions="actionDone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:padding="12dp"
+            android:background="@android:color/white"
+            android:layout_marginBottom="12dp" />
 
-        <!-- Date Button -->
+        <EditText
+            android:id="@+id/etMaxBudget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Max budget per seat ($)"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:background="@android:color/white"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Preferences Section -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Preferences"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <CheckBox
+            android:id="@+id/cbNeedNonSmoking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I need a non-smoking ride"
+            android:layout_marginBottom="8dp" />
+
+        <CheckBox
+            android:id="@+id/cbNeedNoPets"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I need a no-pets ride"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Music preference"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/rgMusic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <RadioButton
+                android:id="@+id/rbMusicYes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Music on" />
+
+            <RadioButton
+                android:id="@+id/rbMusicNo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Music off" />
+
+            <RadioButton
+                android:id="@+id/rbMusicNoPref"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="No preference"
+                android:checked="true" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Conversation level"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/rgConversation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <RadioButton
+                android:id="@+id/rbConversationChatty"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Chatty" />
+
+            <RadioButton
+                android:id="@+id/rbConversationQuiet"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Quiet" />
+
+            <RadioButton
+                android:id="@+id/rbConversationNoPref"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="No preference"
+                android:checked="true" />
+        </RadioGroup>
+
+        <!-- Submit Button -->
         <Button
-            android:id="@+id/dateButton"
-            android:text="Select Date"
-            android:minHeight="48dp"
-            android:layout_marginTop="12dp"
+            android:id="@+id/btnSubmit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Create Request and Find Matches"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:padding="16dp" />
 
-        <!-- Time Button -->
-        <Button
-            android:id="@+id/timeButton"
-            android:text="Select Time"
-            android:minHeight="48dp"
-            android:layout_marginTop="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <!-- NEW: Spacer to ensure button visible when keyboard is up -->
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="24dp"/>
-
-        <Button
-            android:id="@+id/btnCreateRequest"
-            android:text="Create Request"
-            android:minHeight="48dp"
-            android:layout_marginTop="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:layout_marginTop="16dp" />
     </LinearLayout>
 </ScrollView>
