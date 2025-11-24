@@ -1,5 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Penn State Official Colors -->
+    <color name="penn_state_blue">#041E42</color>
+    <color name="penn_state_navy">#041E42</color>
+    <color name="penn_state_white">#FFFFFF</color>
+    <color name="penn_state_gold">#FFC72C</color>
+
+    <!-- Primary Theme Colors (Required by Material Components) -->
+    <color name="colorPrimary">#041E42</color>
+    <color name="colorPrimaryDark">#001528</color>
+    <color name="colorPrimaryVariant">#001528</color>
+    <color name="colorAccent">#041E42</color>
+
+    <!-- Secondary Colors (Required by Material Components) -->
+    <color name="colorSecondary">#FFC72C</color>
+    <color name="colorSecondaryVariant">#E6B000</color>
+
+    <!-- Background Colors -->
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorError">#B00020</color>
+
+    <!-- Text Colors (Required by Material Components) -->
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorOnSecondary">#000000</color>
+    <color name="colorOnBackground">#000000</color>
+    <color name="colorOnSurface">#000000</color>
+    <color name="colorOnError">#FFFFFF</color>
+
+    <!-- Basic Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Gray Scale -->
+    <color name="gray_50">#FAFAFA</color>
+    <color name="gray_100">#F5F5F5</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_300">#E0E0E0</color>
+    <color name="gray_400">#BDBDBD</color>
+    <color name="gray_500">#9E9E9E</color>
+    <color name="gray_600">#757575</color>
+    <color name="gray_700">#616161</color>
+    <color name="gray_800">#424242</color>
+    <color name="gray_900">#212121</color>
+
+    <!-- Legacy gray names for backwards compatibility -->
+    <color name="gray_light">#F5F5F5</color>
+    <color name="gray_medium">#CCCCCC</color>
+    <color name="gray_dark">#666666</color>
+
+    <!-- Button Colors -->
+    <color name="button_primary">#041E42</color>
+    <color name="button_primary_pressed">#001528</color>
+    <color name="button_secondary">#FFFFFF</color>
+    <color name="button_secondary_border">#DDDDDD</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#333333</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_hint">#999999</color>
+
+    <!-- Background Colors -->
+    <color name="background_light">#FAFAFA</color>
+    <color name="background_white">#FFFFFF</color>
+
+    <!-- Status Colors -->
+    <color name="status_success">#4CAF50</color>
+    <color name="status_error">#F44336</color>
+    <color name="status_warning">#FF9800</color>
+
+    <!-- Match Score Badge Colors -->
+    <color name="match_excellent">#4CAF50</color>
+    <color name="match_good">#8BC34A</color>
+    <color name="match_fair">#FFC107</color>
+    <color name="match_poor">#FF9800</color>
 </resources>

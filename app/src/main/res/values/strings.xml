@@ -37,4 +37,7 @@
     <string name="announce_filters_cleared">All filters cleared. Showing all posts.</string>
     <string name="announce_post_updated">Post updated successfully</string>
     <string name="announce_no_results">No posts found matching your filters. Try adjusting your search.</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

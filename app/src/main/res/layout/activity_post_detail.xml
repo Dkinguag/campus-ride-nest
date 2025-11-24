@@ -230,6 +230,8 @@
                 android:minHeight="48dp"
                 android:text="Edit Post"
                 android:contentDescription="@string/cd_edit_button"
+                android:background="@drawable/button_secondary"
+                android:textColor="@color/penn_state_blue"
                 android:nextFocusForward="@id/closeButton"
                 style="@style/Widget.Material3.Button.OutlinedButton" />
 
@@ -242,6 +244,8 @@
                 android:layout_marginStart="8dp"
                 android:minHeight="48dp"
                 android:text="Close Post"
+                android:background="@drawable/button_primary"
+                android:textColor="@color/white"
                 android:contentDescription="@string/cd_close_post_button"
                 style="@style/Widget.Material3.Button" />
         </LinearLayout>

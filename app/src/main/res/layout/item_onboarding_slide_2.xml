@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <!-- Illustration Placeholder -->
+    <ImageView
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginBottom="48dp"
+        android:contentDescription="Smart matching illustration"
+        android:src="@android:drawable/ic_menu_search"
+        app:tint="#041E42" />
+
+    <!-- Match Score Badge -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/badge_match_score"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:text="94% Match"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="Smart Matching"
+        android:textColor="#041E42"
+        android:textSize="32sp"
+        android:textStyle="bold" />
+
+    <!-- Description -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:text="Our algorithm finds your\nperfect ride based on route,\ntime, and preferences"
+        android:textColor="#666666"
+        android:textSize="18sp" />
+
+</LinearLayout>
