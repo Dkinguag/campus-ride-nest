@@ -14,11 +14,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.booknest.campusridenest.R
+import com.booknest.campusridenest.ui.OfferCreateActivity
+import com.booknest.campusridenest.ui.RequestCreateActivity
 import com.booknest.campusridenest.ui.posts.PostsViewModel.UiState
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class PostsFragment : Fragment(R.layout.fragment_posts) {
 
@@ -49,10 +52,10 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
 
-        // Setup FAB if needed
+        // Setup FAB
         val createFab = view.findViewById<FloatingActionButton>(R.id.createFab)
         createFab?.setOnClickListener {
-            // TODO: Navigate to create post screen
+            showCreateOptionsBottomSheet()
         }
 
         // Setup filter button
@@ -60,6 +63,24 @@ class PostsFragment : Fragment(R.layout.fragment_posts) {
 
         // Start observing posts
         startObserving()
+    }
+
+    private fun showCreateOptionsBottomSheet() {
+        val bottomSheet = BottomSheetDialog(requireContext())
+        val sheetView = layoutInflater.inflate(R.layout.bottom_sheet_create_options, null)
+
+        sheetView.findViewById<android.widget.LinearLayout>(R.id.optionCreateOffer).setOnClickListener {
+            startActivity(Intent(requireContext(), OfferCreateActivity::class.java))
+            bottomSheet.dismiss()
+        }
+
+        sheetView.findViewById<android.widget.LinearLayout>(R.id.optionCreateRequest).setOnClickListener {
+            startActivity(Intent(requireContext(), RequestCreateActivity::class.java))
+            bottomSheet.dismiss()
+        }
+
+        bottomSheet.setContentView(sheetView)
+        bottomSheet.show()
     }
 
     private fun setupFilterUI() {

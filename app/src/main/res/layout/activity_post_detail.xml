@@ -220,7 +220,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ownerLayout">
 
-            <!-- Edit Button - ACCESSIBILITY FIXED to 48dp minHeight -->
+            <!-- Edit Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/editButton"
                 android:layout_width="0dp"
@@ -228,14 +228,14 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 android:minHeight="48dp"
-                android:text="Edit Post"
+                android:text="Edit"
                 android:contentDescription="@string/cd_edit_button"
-                android:background="@drawable/button_secondary"
+                app:strokeColor="@color/penn_state_blue"
+                app:strokeWidth="1dp"
                 android:textColor="@color/penn_state_blue"
-                android:nextFocusForward="@id/closeButton"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-            <!-- Close Button - ACCESSIBILITY FIXED to 48dp minHeight -->
+            <!-- Close Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/closeButton"
                 android:layout_width="0dp"
@@ -243,11 +243,11 @@
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:minHeight="48dp"
-                android:text="Close Post"
-                android:background="@drawable/button_primary"
+                android:text="Close"
+                app:backgroundTint="@color/penn_state_blue"
                 android:textColor="@color/white"
                 android:contentDescription="@string/cd_close_post_button"
-                style="@style/Widget.Material3.Button" />
+                style="@style/Widget.MaterialComponents.Button" />
         </LinearLayout>
 
         <!-- Reopen Button (visible for closed posts) -->

@@ -13,8 +13,11 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.booknest.campusridenest.R
 import com.booknest.campusridenest.ui.LoginActivity
+import com.booknest.campusridenest.ui.MyPostsActivity
 import com.booknest.campusridenest.ui.OfferCreateActivity
+import com.booknest.campusridenest.ui.PastRidesActivity
 import com.booknest.campusridenest.ui.RequestCreateActivity
+import com.booknest.campusridenest.ui.SettingsActivity
 import com.booknest.campusridenest.ui.profile.ProfileActivity
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -98,36 +101,29 @@ class PostsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_posts -> {
-                // Already on posts feed - refresh or do nothing
-                Toast.makeText(this, "Posts Feed", Toast.LENGTH_SHORT).show()
+                // Already on posts feed
             }
             R.id.nav_profile -> {
-                // Navigate to profile
-                startActivity(Intent(this, ProfileActivity::class.java))
+                val intent = Intent(this, ProfileActivity::class.java)
+                intent.putExtra("user_id", mAuth.currentUser?.uid)  // CORRECT KEY
+                startActivity(intent)
             }
             R.id.nav_my_posts -> {
-                // Filter to show only user's posts
-                Toast.makeText(this, "My Posts - Coming soon!", Toast.LENGTH_SHORT).show()
-                // TODO: Implement filtering in PostsFragment
+                startActivity(Intent(this, MyPostsActivity::class.java))
             }
             R.id.nav_past_rides -> {
-                // Past rides
-                Toast.makeText(this, "Past Rides - Coming soon!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, PastRidesActivity::class.java))
             }
             R.id.nav_create_offer -> {
-                // Create offer
                 startActivity(Intent(this, OfferCreateActivity::class.java))
             }
             R.id.nav_create_request -> {
-                // Create request
                 startActivity(Intent(this, RequestCreateActivity::class.java))
             }
             R.id.nav_settings -> {
-                // Settings
-                Toast.makeText(this, "Settings - Coming soon!", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, SettingsActivity::class.java))
             }
             R.id.nav_logout -> {
-                // Logout
                 logout()
             }
         }
@@ -135,6 +131,7 @@ class PostsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+
 
     private fun logout() {
         mAuth.signOut()
