@@ -13,10 +13,12 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- Top Row: Route + Your Post Badge + Overflow -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/tvRoute"
@@ -26,6 +28,21 @@
                 android:text="Library → Gym"
                 android:textSize="16sp"
                 android:textStyle="bold" />
+
+            <!-- NEW: Your Post Badge -->
+            <TextView
+                android:id="@+id/tvYourPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your Post"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/badge_your_post"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
 
             <ImageButton
                 android:id="@+id/btnOverflow"
@@ -45,7 +62,7 @@
             android:textSize="14sp"
             android:textColor="#666666" />
 
-        <!-- NEW: Find Matches Button (only for requests) -->
+        <!-- Find Matches Button (only for requests) -->
         <Button
             android:id="@+id/btnFindMatches"
             android:layout_width="match_parent"

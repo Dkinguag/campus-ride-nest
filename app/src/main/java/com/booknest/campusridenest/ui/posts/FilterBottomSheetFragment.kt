@@ -31,12 +31,20 @@ class FilterBottomSheetFragment : BottomSheetDialogFragment() {
         viewModel = ViewModelProvider(requireParentFragment())[PostsViewModel::class.java]
     }
 
+    // FIX: Override getTheme for proper Material styling
+    override fun getTheme(): Int {
+        return R.style.AppTheme_BottomSheetDialog
+    }
+
+    // FIX: Use themed inflater for TextInputLayout support
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_filter_bottom_sheet, container, false)
+        val contextThemeWrapper = android.view.ContextThemeWrapper(requireContext(), R.style.AppTheme)
+        val themedInflater = inflater.cloneInContext(contextThemeWrapper)
+        return themedInflater.inflate(R.layout.fragment_filter_bottom_sheet, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

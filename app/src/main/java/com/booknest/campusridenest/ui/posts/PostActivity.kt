@@ -39,7 +39,7 @@ class PostsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         // Set up toolbar
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
-        supportActionBar?.title = "Campus Ride Nest"
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         // Set up drawer
         drawerLayout = findViewById(R.id.drawer_layout)

@@ -14,64 +14,58 @@
         android:text="Filter Rides"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:nextFocusForward="@id/closeButton"
         app:layout_constraintEnd_toStartOf="@id/closeButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Close Button - ACCESSIBILITY FIXED to 48dp -->
+    <!-- Close Button -->
     <ImageButton
         android:id="@+id/closeButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:contentDescription="@string/cd_filter_close"
-        android:nextFocusForward="@id/et_filter_origin"
+        android:contentDescription="Close filter menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Origin Input -->
+    <!-- Origin Input - FIXED: MaterialComponents style -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/originInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:hint="Origin"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filterTitle"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+        app:layout_constraintTop_toBottomOf="@id/filterTitle">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_filter_origin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:contentDescription="@string/cd_origin_input"
-            android:nextFocusForward="@id/et_filter_destination"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Destination Input -->
+    <!-- Destination Input - FIXED: MaterialComponents style -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/destinationInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:hint="Destination"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/originInputLayout"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+        app:layout_constraintTop_toBottomOf="@id/originInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_filter_destination"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:contentDescription="@string/cd_destination_input"
-            android:nextFocusForward="@id/rb_this_week"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,36 +92,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dateRangeLabel">
 
-        <!-- This Week Radio Button -->
         <RadioButton
             android:id="@+id/rb_this_week"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:text="This Week"
-            android:contentDescription="@string/cd_date_this_week"
-            android:nextFocusForward="@id/rb_next_week"
             android:checked="true" />
 
-        <!-- Next Week Radio Button -->
         <RadioButton
             android:id="@+id/rb_next_week"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:text="Next Week"
-            android:contentDescription="@string/cd_date_next_week"
-            android:nextFocusForward="@id/rb_no_date" />
+            android:text="Next Week" />
 
-        <!-- Custom/No Date Radio Button -->
         <RadioButton
             android:id="@+id/rb_no_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="48dp"
-            android:text="Custom Range"
-            android:contentDescription="@string/cd_date_custom"
-            android:nextFocusForward="@id/btn_clear_filters" />
+            android:text="Any Date" />
     </RadioGroup>
 
     <!-- Action Buttons -->
@@ -135,13 +120,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/rg_date_range">
 
-        <!-- Clear All Button -->
+        <!-- Clear All Button - FIXED: MaterialComponents style -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_clear_filters"
             android:layout_width="0dp"
@@ -150,11 +136,9 @@
             android:layout_marginEnd="8dp"
             android:minHeight="48dp"
             android:text="Clear All"
-            android:contentDescription="@string/cd_filter_clear"
-            android:nextFocusForward="@id/btn_apply_filters"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
-        <!-- Apply Button -->
+        <!-- Apply Button - FIXED: MaterialComponents style -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_apply_filters"
             android:layout_width="0dp"
@@ -163,8 +147,8 @@
             android:layout_marginStart="8dp"
             android:minHeight="48dp"
             android:text="Apply Filters"
-            android:contentDescription="@string/cd_filter_apply"
-            style="@style/Widget.Material3.Button" />
+            app:backgroundTint="@color/penn_state_blue"
+            style="@style/Widget.MaterialComponents.Button" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

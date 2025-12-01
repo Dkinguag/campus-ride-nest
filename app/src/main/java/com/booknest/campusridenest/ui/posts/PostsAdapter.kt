@@ -49,6 +49,7 @@ class PostsAdapter(
         private val tvMeta: TextView = itemView.findViewById(R.id.tvMeta)
         private val btnOverflow: ImageButton = itemView.findViewById(R.id.btnOverflow)
         private val btnFindMatches: Button = itemView.findViewById(R.id.btnFindMatches)
+        private val tvYourPost: TextView = itemView.findViewById(R.id.tvYourPost)  // NEW
 
         fun bind(item: PostUi) {
             tvRoute.text = "${item.from} → ${item.to}"
@@ -73,6 +74,10 @@ class PostsAdapter(
             tvMeta.text = "$metaDate • ${item.type}$seatsText"
 
             val isMine = Firebase.auth.currentUser?.uid == item.ownerUid
+
+            // NEW: Show "Your Post" badge for current user's posts
+            tvYourPost.visibility = if (isMine) View.VISIBLE else View.GONE
+
             btnOverflow.visibility = if (isMine) View.VISIBLE else View.INVISIBLE
 
             // Show "Find Matches" button only for requests that belong to current user

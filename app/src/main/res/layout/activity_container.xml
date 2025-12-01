@@ -12,15 +12,64 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <!-- Toolbar -->
+        <!-- Toolbar with Centered Title -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#041E42"
+            android:background="@color/penn_state_blue"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+            <!-- Centered Title -->
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Campus Ride Nest"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <!-- Ride Feed Header Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp">
+
+            <!-- Ride Feed Title -->
+            <TextView
+                android:id="@+id/tvFeedSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ride Feed"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/penn_state_blue" />
+
+            <!-- Stylish Gradient Line -->
+            <View
+                android:layout_width="80dp"
+                android:layout_height="3dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/gradient_line_accent" />
+
+        </LinearLayout>
+
+        <!-- Subtle Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0" />
 
         <!-- Fragment Container (PostsFragment will load here) -->
         <FrameLayout

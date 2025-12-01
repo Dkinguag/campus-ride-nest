@@ -93,5 +93,17 @@
             android:textSize="12sp"
             android:textColor="#1B5E20"
             android:textStyle="italic" />
+
+        <!-- NEW: Select Ride Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConfirmRide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"
+            android:text="Select This Ride"
+            app:backgroundTint="@color/penn_state_blue"
+            style="@style/Widget.MaterialComponents.Button" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

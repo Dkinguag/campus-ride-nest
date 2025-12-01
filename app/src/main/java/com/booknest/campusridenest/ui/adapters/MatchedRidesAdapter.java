@@ -19,9 +19,17 @@ import java.util.Locale;
 public class MatchedRidesAdapter extends RecyclerView.Adapter<MatchedRidesAdapter.ViewHolder> {
 
     private final List<RideMatch> matches;
+    private final OnMatchClickListener listener;
 
-    public MatchedRidesAdapter(List<RideMatch> matches) {
+    // NEW: Click listener interface
+    public interface OnMatchClickListener {
+        void onMatchClick(RideMatch match);
+    }
+
+    // UPDATED: Constructor with listener
+    public MatchedRidesAdapter(List<RideMatch> matches, OnMatchClickListener listener) {
         this.matches = matches;
+        this.listener = listener;
     }
 
     @NonNull
@@ -35,7 +43,7 @@ public class MatchedRidesAdapter extends RecyclerView.Adapter<MatchedRidesAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         RideMatch match = matches.get(position);
-        holder.bind(match);
+        holder.bind(match, listener);
     }
 
     @Override
@@ -50,6 +58,7 @@ public class MatchedRidesAdapter extends RecyclerView.Adapter<MatchedRidesAdapte
         private final TextView tvMatchScore;
         private final TextView tvDistance;
         private final TextView tvCompatibility;
+        private final com.google.android.material.button.MaterialButton btnConfirmRide;  // NEW
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -59,9 +68,10 @@ public class MatchedRidesAdapter extends RecyclerView.Adapter<MatchedRidesAdapte
             tvMatchScore = itemView.findViewById(R.id.tvMatchScore);
             tvDistance = itemView.findViewById(R.id.tvDistance);
             tvCompatibility = itemView.findViewById(R.id.tvCompatibility);
+            btnConfirmRide = itemView.findViewById(R.id.btnConfirmRide);  // NEW
         }
 
-        public void bind(RideMatch match) {
+        public void bind(RideMatch match, OnMatchClickListener listener) {
             tvRoute.setText(match.offer.from + " → " + match.offer.to);
 
             SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, h:mm a", Locale.getDefault());
@@ -78,6 +88,13 @@ public class MatchedRidesAdapter extends RecyclerView.Adapter<MatchedRidesAdapte
             tvDistance.setText(distanceText);
 
             tvCompatibility.setText(match.compatibilityReason);
+
+            // NEW: Button click
+            btnConfirmRide.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onMatchClick(match);
+                }
+            });
         }
     }
 }
