@@ -257,6 +257,7 @@ public class MatchedRidesActivity extends AppCompatActivity implements MatchedRi
             return null;
         }).addOnSuccessListener(aVoid -> {
             showLoading(false);
+            notifyDriver(match);
             showCheckoutSuccess(match);
         }).addOnFailureListener(e -> {
             showLoading(false);
@@ -264,19 +265,46 @@ public class MatchedRidesActivity extends AppCompatActivity implements MatchedRi
         });
     }
 
-    // NEW: Show success and navigate
+    private void notifyDriver(RideMatch match) {
+        // Get driver's FCM token
+        db.collection("users")
+                .document(match.offer.ownerUid)
+                .get()
+                .addOnSuccessListener(driverDoc -> {
+                    String fcmToken = driverDoc.getString("fcmToken");
+                    if (fcmToken != null) {
+                        // Send notification via your backend or Cloud Functions
+                        // For now, we'll create a notification document
+                        Map<String, Object> notification = new HashMap<>();
+                        notification.put("type", "new_rider");
+                        notification.put("driverUid", match.offer.ownerUid);
+                        notification.put("riderUid", auth.getCurrentUser().getUid());
+                        notification.put("offerId", match.offer.id);
+                        notification.put("pickupLocation", currentRequest.from);
+                        notification.put("timestamp", FieldValue.serverTimestamp());
+                        notification.put("read", false);
+
+                        db.collection("notifications").add(notification);
+                    }
+                });
+    }
+
+    // NEW: Show success and navigate to confirmation screen
     private void showCheckoutSuccess(RideMatch match) {
-        new MaterialAlertDialogBuilder(this)
-                .setTitle("Ride Confirmed! 🎉")
-                .setMessage("You've successfully joined the ride from " +
-                        match.offer.from + " to " + match.offer.to +
-                        ".\n\nThe driver will be notified of your booking.")
-                .setPositiveButton("Done", (dialog, which) -> {
-                    // Navigate back to posts
-                    finish();
-                })
-                .setCancelable(false)
-                .show();
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd 'at' h:mm a", Locale.getDefault());
+        String rideTime = sdf.format(new Date(match.offer.timeMillis));
+
+        Intent intent = new Intent(this, RideConfirmationActivity.class);
+        intent.putExtra("pickupLocation", currentRequest.from);
+        intent.putExtra("dropoffLocation", currentRequest.to);
+        intent.putExtra("rideTime", rideTime);
+        intent.putExtra("driverUid", match.offer.ownerUid);
+        intent.putExtra("pickupLat", currentRequest.pickupLocation.getLatitude());
+        intent.putExtra("pickupLon", currentRequest.pickupLocation.getLongitude());
+        intent.putExtra("offerId", match.offer.id);
+
+        startActivity(intent);
+        finish(); // Close matching activity
     }
 
     private void showLoading(boolean show) {

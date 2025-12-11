@@ -12,6 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.booknest.campusridenest.R
+import com.booknest.campusridenest.ui.ActiveRidesActivity
 import com.booknest.campusridenest.ui.LoginActivity
 import com.booknest.campusridenest.ui.MyPostsActivity
 import com.booknest.campusridenest.ui.OfferCreateActivity
@@ -125,6 +126,9 @@ class PostsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             }
             R.id.nav_logout -> {
                 logout()
+            }
+            R.id.nav_active_rides -> {
+                startActivity(Intent(this, ActiveRidesActivity::class.java))
             }
         }
 

@@ -56,9 +56,28 @@ dependencies {
     implementation ("androidx.activity:activity-ktx:1.8.2")
     implementation ("com.google.android.material:material:1.9.0")
     implementation ("androidx.drawerlayout:drawerlayout:1.2.0")
+    implementation ("com.google.firebase:firebase-messaging:23.3.1")
 
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    // Unit Testing
+    testImplementation ("junit:junit:4.13.2")
+    testImplementation ("org.mockito:mockito-core:5.3.1")
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:5.1.0")
+
+    // Android Instrumentation Testing
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation ("androidx.test:runner:1.5.2")
+    androidTestImplementation ("androidx.test:rules:1.5.0")
+
+    // Espresso UI Testing
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.5.1")
+
+    // Coroutines Testing (for Kotlin)
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }

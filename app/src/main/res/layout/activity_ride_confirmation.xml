@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <!-- Success Icon -->
+        <TextView
+            android:id="@+id/successIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✅"
+            android:textSize="80sp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvConfirmationTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Ride Confirmed! 🎉"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/penn_state_blue"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/successIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Subtitle -->
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Here are your ride details:"
+            android:textSize="16sp"
+            android:textColor="@color/text_secondary"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/tvConfirmationTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Card Container -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardDetails"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Pickup Location -->
+                <TextView
+                    android:id="@+id/tvPickupLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📍 Meet at: Library"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary" />
+
+                <!-- Dropoff Location -->
+                <TextView
+                    android:id="@+id/tvDropoffLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="🎯 Going to: Gym"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary" />
+
+                <!-- Time -->
+                <TextView
+                    android:id="@+id/tvRideTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="⏰ Nov 17, 7:15 PM"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary" />
+
+                <!-- Driver -->
+                <TextView
+                    android:id="@+id/tvDriverName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="🚗 Driver: Loading..."
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- View on Map Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewOnMap"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:minHeight="48dp"
+            android:text="View Pickup on Map"
+            app:icon="@android:drawable/ic_dialog_map"
+            app:backgroundTint="@color/penn_state_blue"
+            style="@style/Widget.MaterialComponents.Button"
+            app:layout_constraintTop_toBottomOf="@id/cardDetails"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Contact Driver Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnContactDriver"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:minHeight="48dp"
+            android:text="Contact Driver"
+            app:icon="@android:drawable/ic_dialog_email"
+            app:strokeColor="@color/penn_state_blue"
+            app:strokeWidth="1dp"
+            android:textColor="@color/penn_state_blue"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:layout_constraintTop_toBottomOf="@id/btnViewOnMap"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Done Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:minHeight="48dp"
+            android:text="Done"
+            app:backgroundTint="@color/penn_state_gold"
+            style="@style/Widget.MaterialComponents.Button"
+            app:layout_constraintTop_toBottomOf="@id/btnContactDriver"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

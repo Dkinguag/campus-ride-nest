@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- New Rider Badge -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🆕 New Rider"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@drawable/badge_your_post"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp" />
+
+        <!-- Route -->
+        <TextView
+            android:id="@+id/tvActiveRideRoute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Library → Gym"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <!-- Time -->
+        <TextView
+            android:id="@+id/tvActiveRideTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="⏰ Nov 17, 7:15 PM"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary" />
+
+        <!-- Rider Name -->
+        <TextView
+            android:id="@+id/tvRiderName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="👤 Rider: John Doe"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/penn_state_blue" />
+
+        <!-- Pickup Location -->
+        <TextView
+            android:id="@+id/tvPickupLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="📍 Pick up at: Library Entrance"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary" />
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnViewPickupMap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:minHeight="48dp"
+                android:text="View Map"
+                app:icon="@android:drawable/ic_dialog_map"
+                app:backgroundTint="@color/penn_state_blue"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnContactRider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:minHeight="48dp"
+                android:text="Contact"
+                app:icon="@android:drawable/ic_dialog_email"
+                app:strokeColor="@color/penn_state_blue"
+                app:strokeWidth="1dp"
+                android:textColor="@color/penn_state_blue"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
